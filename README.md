@@ -1,6 +1,6 @@
 # InventoryManagement
 
-A full-stack inventory, purchase, and sales management system I built using ASP.NET Core 10, Entity Framework Core, and MySQL — combining a server-rendered MVC UI with a parallel JWT-secured REST API, backed by a custom role/permission-based authorization system.
+A full-stack inventory, purchase, and sales management system I built using ASP.NET Core 10, Entity Framework Core, and MySQL, combining a server-rendered MVC UI with a parallel JWT-secured REST API, backed by a custom role/permission-based authorization system.
 
 ## About this project
 

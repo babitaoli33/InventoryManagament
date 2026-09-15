@@ -103,6 +103,3 @@ The app opens on the login page, and a default admin user is seeded automaticall
 - Containerize with Docker + docker-compose (app + MySQL)
 - Add API versioning and expand Swagger documentation
 
-## License
-
-Not currently licensed for reuse. Feel free to reach out if you'd like to use or build on this project.

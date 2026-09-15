@@ -1,0 +1,318 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>Create Vendor</title>
+
+    <link rel="stylesheet" href="~/css/Vendor/Create.css" />
+
+</head>
+
+
+
+<body>
+
+
+
+    <div class="page">
+
+
+
+        <div class="header">
+
+
+            <div>
+
+                <h1>
+                    Add Vendor
+                </h1>
+
+
+                <p>
+                    Create a new vendor for your inventory
+                </p>
+
+
+            </div>
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="form-card">
+
+
+
+            <form id="vendorForm">
+
+
+
+
+
+                <div class="form-group">
+
+
+                    <label>
+                        Vendor Name
+                    </label>
+
+
+                    <input type="text"
+                           id="name"
+                           placeholder="Enter vendor name"
+                           required />
+
+
+                </div>
+
+
+
+
+
+
+
+                <div class="form-group">
+
+
+                    <label>
+                        Description
+                    </label>
+
+
+                    <textarea id="description"
+                              placeholder="Enter vendor description"></textarea>
+
+
+                </div>
+
+
+
+
+
+
+
+
+                <div class="checkbox-group">
+
+
+                    <input type="checkbox"
+                           id="isActive"
+                           checked />
+
+
+                    <label>
+                        Active
+                    </label>
+
+
+                </div>
+
+
+
+
+
+
+
+
+                <div class="form-actions">
+
+
+
+                    <a href="/Vendor"
+                       class="cancel-btn">
+
+                        Cancel
+
+                    </a>
+
+
+
+
+
+                    <button type="submit"
+                            class="save-btn">
+
+
+                        Create Vendor
+
+
+                    </button>
+
+
+
+
+                </div>
+
+
+
+
+
+
+
+            </form>
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+    </div>
+
+
+
+
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+
+
+
+
+
+
+    <script>
+
+
+            $(document).ready(function() {
+
+
+
+                $("#vendorForm").submit(function(e) {
+
+
+                    e.preventDefault();
+
+
+
+
+
+                    let vendor = {
+
+
+                        name: $("#name").val(),
+
+
+                        description: $("#description").val(),
+
+
+                        isActive: $("#isActive").is(":checked")
+
+
+                    };
+
+
+
+
+
+
+
+                    $.ajax({
+
+
+                        url: "/api/vendors",
+
+
+                        type: "POST",
+
+
+                        contentType: "application/json",
+
+
+                        data: JSON.stringify(vendor),
+
+
+
+
+
+
+                        success: function(response) {
+
+
+
+                            alert("Vendor created successfully");
+
+
+
+                            window.location.href = "/Vendor/Index";
+
+
+
+                        },
+
+
+
+
+
+
+                        error: function(xhr) {
+
+
+
+                            alert("Unable to create vendor");
+
+
+
+                            console.log(xhr.responseText);
+
+
+
+                        }
+
+
+
+
+
+
+
+                    });
+
+
+
+
+
+
+
+                });
+
+
+
+
+
+            });
+
+
+
+    </script>
+
+
+
+
+
+
+</body>
+
+
+</html>

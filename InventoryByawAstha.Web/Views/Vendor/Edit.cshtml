@@ -1,0 +1,396 @@
+﻿@model InventoryByawAstha.Web.ViewModels.Vendor.VendorEditViewModel
+
+@{
+    Layout = "_Layout";
+}
+
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>Edit Vendor</title>
+
+    <link rel="stylesheet" href="~/css/Vendor/Edit.css" />
+
+</head>
+
+
+<body>
+
+
+
+    <div class="page">
+
+
+
+        <div class="header">
+
+
+            <div>
+
+
+                <h1>
+                    Edit Vendor
+                </h1>
+
+
+                <p>
+                    Update vendor information
+                </p>
+
+
+            </div>
+
+
+        </div>
+
+
+
+
+
+
+
+
+        <div class="form-card">
+
+
+
+            <form id="vendorForm">
+
+
+
+
+
+                <input type="hidden"
+                       id="vendorId"
+                       value="@Model.VendorId" />
+
+
+
+
+
+
+
+                <div class="form-group">
+
+
+                    <label>
+                        Vendor Name
+                    </label>
+
+
+                    <input type="text"
+                           id="name"
+                           placeholder="Enter vendor name"
+                           required />
+
+
+
+                </div>
+
+
+
+
+
+
+
+                <div class="form-group">
+
+
+                    <label>
+                        Description
+                    </label>
+
+
+                    <textarea id="description"
+                              placeholder="Enter description"></textarea>
+
+
+                </div>
+
+
+
+
+
+
+
+                <div class="checkbox-group">
+
+
+                    <input type="checkbox"
+                           id="isActive" />
+
+
+                    <label>
+                        Active
+                    </label>
+
+
+                </div>
+
+
+
+
+
+
+
+                <div class="form-actions">
+
+
+
+                    <a href="/Vendor/Index"
+                       class="cancel-btn">
+
+                        Cancel
+
+                    </a>
+
+
+
+
+
+                    <button type="submit"
+                            class="save-btn">
+
+                        Update Vendor
+
+                    </button>
+
+
+
+                </div>
+
+
+
+
+
+
+            </form>
+
+
+
+
+        </div>
+
+
+
+
+
+
+    </div>
+
+
+
+
+
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+
+
+
+
+
+    <script>
+
+
+            $(document).ready(function() {
+
+
+
+                let vendorId = $("#vendorId").val();
+
+
+
+
+                loadVendor(vendorId);
+
+
+
+
+
+
+
+                function loadVendor(id) {
+
+
+
+                    $.ajax({
+
+
+                        url: "/api/vendors/" + id,
+
+                        type: "GET",
+
+
+
+
+                        success: function(vendor) {
+
+
+                            $("#name").val(vendor.name);
+
+
+                            $("#description").val(vendor.description);
+
+
+                            $("#isActive").prop(
+                                "checked",
+                                vendor.isActive
+                            );
+
+
+
+                        },
+
+
+
+                        error: function(xhr) {
+
+
+                            alert("Unable to load vendor");
+
+
+                            console.log(xhr.responseText);
+
+
+                        }
+
+
+
+                    });
+
+
+
+                }
+
+
+
+
+
+
+
+
+
+                $("#vendorForm").submit(function(e) {
+
+
+                    e.preventDefault();
+
+
+
+
+
+                    let id = $("#vendorId").val();
+
+
+
+
+
+                    let vendor = {
+
+
+                        name: $("#name").val(),
+
+
+                        description: $("#description").val(),
+
+
+                        isActive: $("#isActive").is(":checked")
+
+
+
+                    };
+
+
+
+
+
+
+
+                    $.ajax({
+
+
+                        url: "/api/vendors/" + id,
+
+
+                        type: "PUT",
+
+
+                        contentType: "application/json",
+
+
+                        data: JSON.stringify(vendor),
+
+
+
+
+
+
+                        success: function() {
+
+
+
+                            alert("Vendor updated successfully");
+
+
+                            window.location.href = "/Vendor/Index";
+
+
+
+                        },
+
+
+
+
+
+                        error: function(xhr) {
+
+
+
+                            alert("Unable to update vendor");
+
+
+                            console.log(xhr.responseText);
+
+
+
+                        }
+
+
+
+                    });
+
+
+
+
+
+
+
+                });
+
+
+
+
+
+
+
+            });
+
+
+
+    </script>
+
+
+
+
+
+</body>
+
+</html>

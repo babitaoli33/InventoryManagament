@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="InventoryByawAstha.BLL/InventoryByawAstha.BLL.csproj" Id="d7373f04-f2db-45f4-92cd-110ae945de31" />
+  <Project Path="InventoryByawAstha.DAL/InventoryByawAstha.DAL.csproj" />
+  <Project Path="InventoryByawAstha.Domain/InventoryByawAstha.Domain.csproj" Id="849451c0-c3ad-434b-b090-9e9374d1bb3a" />
+  <Project Path="InventoryByawAstha.Web/InventoryByawAstha.Web.csproj" Id="62842158-f6c7-40e1-a852-cf32f07fe960" />
+  <Project Path="PasswordHashGenerator/PasswordHashGenerator.csproj" Id="372b6350-cde0-4ed4-9518-747bb6cd8465" />
+</Solution>

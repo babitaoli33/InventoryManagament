@@ -1,0 +1,356 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>Vendors</title>
+
+    <link rel="stylesheet" href="~/css/Vendor/Index.css" />
+
+</head>
+
+
+<body>
+
+
+    <div class="page">
+
+
+        <div class="header">
+
+
+            <div>
+
+                <h1>
+                    Vendors
+                </h1>
+
+
+                <p>
+                    Manage your suppliers and vendors
+                </p>
+
+
+            </div>
+
+
+
+
+
+            <div class="header-actions">
+
+
+                <a href="/Vendor/Create"
+                   class="create-btn">
+
+
+                    + Add Vendor
+
+
+                </a>
+
+
+            </div>
+
+
+
+        </div>
+
+
+
+
+
+
+        <div id="vendorContainer"
+             class="vendor-grid">
+        </div>
+
+
+
+
+
+    </div>
+
+
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+
+
+
+
+    <script>
+
+
+            $(document).ready(function() {
+
+
+                loadVendors();
+
+
+            });
+
+
+
+
+
+
+            function loadVendors() {
+
+
+
+                $.ajax({
+
+
+                    url: "/api/vendors",
+
+
+                    type: "GET",
+
+
+
+                    success: function(vendors) {
+
+
+
+                        let cards = "";
+
+
+
+
+
+                        $.each(vendors, function(index, vendor) {
+
+
+
+
+
+                            cards += `
+
+
+
+
+
+                            <div class="vendor-card">
+
+
+
+
+
+
+                                <div class="vendor-top">
+
+
+                                    <span class="${vendor.isActive ? "active" : "inactive"} status">
+
+
+                                        ${vendor.isActive ? "Active" : "Inactive"}
+
+
+                                    </span>
+
+
+                                </div>
+
+
+
+
+
+
+
+
+
+                                <h2>
+
+
+                                    ${vendor.name}
+
+
+                                </h2>
+
+
+
+
+
+
+
+
+
+                                <p class="description">
+
+
+                                    ${vendor.description}
+
+
+                                </p>
+
+
+
+
+
+
+
+
+
+                                <div class="vendor-details">
+
+
+
+
+
+
+
+                                    <div class="detail-item">
+
+
+                                        <strong>
+
+                                            Created By:
+
+                                        </strong>
+
+
+                                        <span>
+
+                                            ${vendor.createdBy}
+
+                                        </span>
+
+
+                                    </div>
+
+
+
+
+
+
+
+                                    <div class="detail-item">
+
+
+                                        <strong>
+
+                                            Status:
+
+                                        </strong>
+
+
+                                        <span>
+
+                                            ${vendor.isActive ? "Active" : "Inactive"}
+
+                                        </span>
+
+
+                                    </div>
+
+
+
+
+
+
+
+                                </div>
+
+
+
+
+
+
+
+
+
+                                <div class="card-footer">
+
+
+
+
+
+                                    <a href="/Vendor/Edit/${vendor.vendorId}"
+                                       class="edit-btn">
+
+
+                                        Edit
+
+
+                                    </a>
+
+
+
+
+
+                                </div>
+
+
+
+
+
+
+
+                            </div>
+
+
+
+
+
+
+                            `;
+
+
+
+                        });
+
+
+
+
+
+
+                        $("#vendorContainer")
+                            .html(cards);
+
+
+
+
+                    },
+
+
+
+
+                    error: function() {
+
+
+                        alert("Unable to load vendors");
+
+
+                    }
+
+
+
+                });
+
+
+
+            }
+
+
+
+
+
+    </script>
+
+
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,265 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<title>Purchases</title>
+
+<link rel="stylesheet" href="~/css/Purchase/Index.css" />
+
+<div class="page">
+
+    <!-- =========================
+     HEADER
+========================= -->
+
+    <div class="header">
+
+        <div>
+
+            <h1>
+                Purchases
+            </h1>
+
+            <p>
+                Manage and view your purchase history
+            </p>
+
+        </div>
+
+        <div class="header-actions">
+
+            <a href="/Purchase/Create"
+               class="create-btn">
+
+                + New Purchase
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+     PURCHASE TABLE
+========================= -->
+
+    <div class="purchase-card">
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Purchase ID
+                        </th>
+
+                        <th>
+                            Vendor
+                        </th>
+
+                        <th>
+                            Purchase Date
+                        </th>
+
+                        <th>
+                            Created By
+                        </th>
+
+                        <th>
+                            Total Amount
+                        </th>
+
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="purchaseContainer">
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+<!-- =========================
+     JQUERY
+========================= -->
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script>
+
+    $(document).ready(function() {
+
+        loadPurchases();
+
+    });
+
+
+    // =========================
+    // LOAD PURCHASES
+    // =========================
+
+    function loadPurchases() {
+
+        $.ajax({
+
+            url: "/api/purchase",
+
+            type: "GET",
+
+            success: function(purchases) {
+
+                let rows = "";
+
+
+                // =========================
+                // NO PURCHASES
+                // =========================
+
+                if (!purchases ||
+                    purchases.length === 0) {
+
+                    rows = `
+
+                            <tr>
+
+                                <td colspan="6"
+                                    class="empty-message">
+
+                                    No purchases found.
+
+                                </td>
+
+                            </tr>
+
+                        `;
+
+                }
+
+                // =========================
+                // PURCHASES FOUND
+                // =========================
+
+                else {
+
+                    $.each(
+                        purchases,
+                        function(index, purchase) {
+
+                            rows += `
+
+                                    <tr>
+
+                                        <td>
+                                            #${purchase.purchaseId}
+                                        </td>
+
+
+                                        <td>
+                                            ${purchase.vendorName}
+                                        </td>
+
+
+                                        <td>
+
+                                            ${new Date(
+                                purchase.purchaseDate
+                            ).toLocaleString()}
+
+                                        </td>
+
+
+                                        <td>
+                                            ${purchase.createdBy}
+                                        </td>
+
+
+                                        <td class="amount">
+
+                                            Rs.
+                                            ${Number(
+                                purchase.totalAmount
+                            ).toFixed(2)}
+
+                                        </td>
+
+
+                                        <td>
+    <a href="/Purchase/Details/${purchase.purchaseId}?vendor=${encodeURIComponent(purchase.vendorName)}&createdBy=${encodeURIComponent(purchase.createdBy)}&date=${encodeURIComponent(purchase.purchaseDate)}&totalAmount=${purchase.totalAmount}"
+       class="view-btn">
+        View Details
+    </a>
+
+                                        </td>
+
+                                    </tr>
+
+                                `;
+
+                        }
+                    );
+
+                }
+
+
+                $("#purchaseContainer")
+                    .html(rows);
+
+            },
+
+
+            // =========================
+            // ERROR
+            // =========================
+
+            error: function(xhr) {
+
+                let message =
+                    "Unable to load purchases.";
+
+
+                if (xhr.responseJSON &&
+                    xhr.responseJSON.message) {
+
+                    message =
+                        xhr.responseJSON.message;
+
+                }
+
+
+                $("#purchaseContainer").html(`
+
+                        <tr>
+
+                            <td colspan="6"
+                                class="error-message">
+
+                                ${message}
+
+                            </td>
+
+                        </tr>
+
+                    `);
+
+            }
+
+        });
+
+    }
+
+</script>

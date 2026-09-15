@@ -1,0 +1,635 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    ```
+    <title>New Purchase</title>
+
+    <link rel="stylesheet" href="~/css/Purchase/Create.css" />
+    ```
+
+</head>
+
+<body>
+
+    ```
+    <div class="page">
+
+        <div class="header">
+
+            <div>
+
+                <h1>
+                    New Purchase
+                </h1>
+
+                <p>
+                    Create a new purchase from a vendor
+                </p>
+
+            </div>
+
+            <div>
+
+                <a href="/Purchase/Index"
+                   class="back-btn">
+
+                    ← Back to Purchases
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="purchase-card">
+
+            <div class="section">
+
+                <h2>
+                    Purchase Information
+                </h2>
+
+                <div class="form-group">
+
+                    <label for="vendor">
+                        Vendor
+                    </label>
+
+                    <select id="vendor">
+
+                        <option value="">
+                            Select Vendor
+                        </option>
+
+                    </select>
+
+                    <span id="vendorError"
+                          class="error-message">
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <h2>
+                            Products
+                        </h2>
+
+                        <p>
+                            Add one or more products to this purchase
+                        </p>
+
+                    </div>
+
+                    <button type="button"
+                            id="addProductBtn"
+                            class="add-product-btn">
+
+                        + Add Product
+
+                    </button>
+
+                </div>
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Product
+                                </th>
+
+                                <th>
+                                    Quantity
+                                </th>
+
+                                <th>
+                                    Purchase Price
+                                </th>
+
+                                <th>
+                                    Sales Price
+                                </th>
+
+                                <th>
+                                    Amount
+                                </th>
+
+                                <th>
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="purchaseItems">
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <span id="productError"
+                      class="error-message">
+                </span>
+
+            </div>
+
+            <div class="total-section">
+
+                <span>
+                    Total Amount
+                </span>
+
+                <strong id="totalAmount">
+                    Rs. 0.00
+                </strong>
+
+            </div>
+
+            <div class="actions">
+
+                <a href="/Purchase/Index"
+                   class="cancel-btn">
+
+                    Cancel
+
+                </a>
+
+                <button type="button"
+                        id="savePurchaseBtn"
+                        class="save-btn">
+
+                    Save Purchase
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <script>
+
+            let products = [];
+
+            $(document).ready(function() {
+
+                loadVendors();
+
+                loadProducts();
+
+                addProductRow();
+
+            });
+
+            function loadVendors() {
+
+                $.ajax({
+
+                    url: "/api/vendors",
+
+                    type: "GET",
+
+                    success: function(vendors) {
+
+                        $.each(vendors, function(index, vendor) {
+
+                            $("#vendor").append(
+                                $("<option>", {
+                                    value: vendor.vendorId,
+                                    text: vendor.name
+                                })
+                            );
+
+                        });
+
+                    },
+
+                    error: function() {
+
+                        $("#vendorError")
+                            .text("Unable to load vendors.");
+
+                    }
+
+                });
+
+            }
+
+            function loadProducts() {
+
+                $.ajax({
+
+                    url: "/api/product",
+
+                    type: "GET",
+
+                    success: function(data) {
+
+                        products = data;
+
+                        refreshProductDropdowns();
+
+                    },
+
+                    error: function() {
+
+                        $("#productError")
+                            .text("Unable to load products.");
+
+                    }
+
+                });
+
+            }
+
+            $("#addProductBtn").click(function() {
+
+                addProductRow();
+
+            });
+
+            function addProductRow() {
+
+                let row = $("<tr>", {
+                    class: "purchase-row"
+                });
+
+                let productCell = $("<td>");
+
+                let productSelect = $("<select>", {
+                    class: "product-select"
+                });
+
+                productSelect.append(
+                    $("<option>", {
+                        value: "",
+                        text: "Select Product"
+                    })
+                );
+
+                productCell.append(productSelect);
+
+                let quantityCell = $("<td>");
+
+                quantityCell.append(
+                    $("<input>", {
+                        type: "number",
+                        class: "quantity",
+                        min: "1",
+                        value: "1"
+                    })
+                );
+
+                let purchasePriceCell = $("<td>");
+
+                purchasePriceCell.append(
+                    $("<input>", {
+                        type: "number",
+                        class: "purchase-price",
+                        min: "0",
+                        step: "0.01",
+                        placeholder: "0.00"
+                    })
+                );
+
+                let salesPriceCell = $("<td>");
+
+                salesPriceCell.append(
+                    $("<input>", {
+                        type: "number",
+                        class: "sales-price",
+                        min: "0",
+                        step: "0.01",
+                        placeholder: "0.00"
+                    })
+                );
+
+                let amountCell = $("<td>");
+
+                amountCell.append(
+                    $("<span>", {
+                        class: "amount",
+                        text: "Rs. 0.00"
+                    })
+                );
+
+                let removeCell = $("<td>");
+
+                removeCell.append(
+                    $("<button>", {
+                        type: "button",
+                        class: "remove-btn",
+                        text: "×"
+                    })
+                );
+
+                row.append(
+                    productCell,
+                    quantityCell,
+                    purchasePriceCell,
+                    salesPriceCell,
+                    amountCell,
+                    removeCell
+                );
+
+                $("#purchaseItems").append(row);
+
+                refreshProductDropdowns();
+
+            }
+
+            function refreshProductDropdowns() {
+
+                $(".product-select").each(function() {
+
+                    let select = $(this);
+
+                    let selectedValue = select.val();
+
+                    select.empty();
+
+                    select.append(
+                        $("<option>", {
+                            value: "",
+                            text: "Select Product"
+                        })
+                    );
+
+                    $.each(products, function(index, product) {
+
+                        select.append(
+                            $("<option>", {
+                                value: product.productId,
+                                text: product.name
+                            })
+                        );
+
+                    });
+
+                    select.val(selectedValue);
+
+                });
+
+            }
+
+            $(document).on(
+                "input",
+                ".quantity, .purchase-price",
+                function() {
+
+                    calculateRowAmount(
+                        $(this).closest("tr")
+                    );
+
+                    calculateTotal();
+
+                }
+            );
+
+            function calculateRowAmount(row) {
+
+                let quantity =
+                    parseFloat(
+                        row.find(".quantity").val()
+                    ) || 0;
+
+                let purchasePrice =
+                    parseFloat(
+                        row.find(".purchase-price").val()
+                    ) || 0;
+
+                let amount =
+                    quantity * purchasePrice;
+
+                row.find(".amount")
+                    .text(
+                        "Rs. " + amount.toFixed(2)
+                    );
+
+            }
+
+            function calculateTotal() {
+
+                let total = 0;
+
+                $(".purchase-row").each(function() {
+
+                    let quantity =
+                        parseFloat(
+                            $(this)
+                                .find(".quantity")
+                                .val()
+                        ) || 0;
+
+                    let purchasePrice =
+                        parseFloat(
+                            $(this)
+                                .find(".purchase-price")
+                                .val()
+                        ) || 0;
+
+                    total +=
+                        quantity * purchasePrice;
+
+                });
+
+                $("#totalAmount")
+                    .text(
+                        "Rs. " + total.toFixed(2)
+                    );
+
+            }
+
+            $(document).on(
+                "click",
+                ".remove-btn",
+                function() {
+
+                    $(this)
+                        .closest("tr")
+                        .remove();
+
+                    calculateTotal();
+
+                }
+            );
+
+            $("#savePurchaseBtn").click(function() {
+
+                $("#vendorError").text("");
+
+                $("#productError").text("");
+
+                let vendorId =
+                    parseInt(
+                        $("#vendor").val()
+                    );
+
+                if (!vendorId) {
+
+                    $("#vendorError")
+                        .text(
+                            "Please select a vendor."
+                        );
+
+                    return;
+
+                }
+
+                let items = [];
+
+                let valid = true;
+
+                $(".purchase-row").each(function() {
+
+                    let row = $(this);
+
+                    let productId =
+                        parseInt(
+                            row
+                                .find(".product-select")
+                                .val()
+                        );
+
+                    let quantity =
+                        parseInt(
+                            row
+                                .find(".quantity")
+                                .val()
+                        );
+
+                    let purchasePrice =
+                        parseFloat(
+                            row
+                                .find(".purchase-price")
+                                .val()
+                        );
+
+                    let salesPrice =
+                        parseFloat(
+                            row
+                                .find(".sales-price")
+                                .val()
+                        );
+
+                    if (
+                        !productId ||
+                        !quantity ||
+                        purchasePrice < 0 ||
+                        isNaN(purchasePrice) ||
+                        salesPrice < 0 ||
+                        isNaN(salesPrice)
+                    ) {
+
+                        valid = false;
+
+                        return false;
+
+                    }
+
+                    items.push({
+
+                        productId: productId,
+
+                        quantity: quantity,
+
+                        purchasePrice: purchasePrice,
+
+                        salesPrice: salesPrice
+
+                    });
+
+                });
+
+                if (!valid || items.length === 0) {
+
+                    $("#productError")
+                        .text(
+                            "Please enter valid information for all products."
+                        );
+
+                    return;
+
+                }
+
+                let request = {
+
+                    vendorId: vendorId,
+
+                    items: items
+
+                };
+
+                $.ajax({
+
+                    url: "/api/purchase",
+
+                    type: "POST",
+
+                    contentType: "application/json",
+
+                    data: JSON.stringify(request),
+
+                    success: function(response) {
+
+                        alert(
+                            response.message ||
+                            "Purchase created successfully."
+                        );
+
+                        window.location.href =
+                            "/Purchase/Index";
+
+                    },
+
+                    error: function(xhr) {
+
+                        let message =
+                            "Unable to create purchase.";
+
+                        if (
+                            xhr.responseJSON &&
+                            xhr.responseJSON.message
+                        ) {
+
+                            message =
+                                xhr.responseJSON.message;
+
+                        }
+
+                        alert(message);
+
+                    }
+
+                });
+
+            });
+
+    </script>
+   
+
+</body>
+
+</html>

@@ -1,0 +1,481 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<title>Sale Details</title>
+
+<link rel="stylesheet"
+      href="~/css/Sale/Details.css" />
+
+
+<div class="page">
+
+    <!-- =========================
+         HEADER
+    ========================= -->
+
+    <div class="header">
+
+        <div>
+
+            <h1>
+                Sale Details
+            </h1>
+
+            <p>
+                View the complete details of this sale
+            </p>
+
+        </div>
+
+
+        <div class="header-actions">
+
+            <a href="/Sale/Index"
+               class="back-btn">
+
+                ← Back to Sales
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         SALE CARD
+    ========================= -->
+
+    <div class="sale-card">
+
+
+        <!-- =========================
+             SALE INFORMATION
+        ========================= -->
+
+        <div class="sale-header">
+
+
+            <div class="info-item">
+
+                <span class="label">
+                    Sale ID
+                </span>
+
+                <strong id="saleId">
+                    -
+                </strong>
+
+            </div>
+
+
+
+            <div class="info-item">
+
+                <span class="label">
+                    Customer
+                </span>
+
+                <strong id="customerName">
+                    -
+                </strong>
+
+            </div>
+
+
+
+            <div class="info-item">
+
+                <span class="label">
+                    Sale Date
+                </span>
+
+                <strong id="saleDate">
+                    -
+                </strong>
+
+            </div>
+
+
+
+            <div class="info-item">
+
+                <span class="label">
+                    Created By
+                </span>
+
+                <strong id="createdBy">
+                    -
+                </strong>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =========================
+             PRODUCTS
+        ========================= -->
+
+        <div class="section">
+
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2>
+                        Sold Products
+                    </h2>
+
+                    <p>
+                        Products included in this sale
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Product
+                            </th>
+
+                            <th>
+                                Quantity
+                            </th>
+
+                            <th>
+                                Sales Price
+                            </th>
+
+                            <th>
+                                Amount
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="detailsContainer">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =========================
+             TOTAL
+        ========================= -->
+
+        <div class="total-section">
+
+            <span>
+                Total Amount
+            </span>
+
+
+            <strong id="totalAmount">
+
+                Rs. 0.00
+
+            </strong>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     JQUERY
+========================= -->
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+
+<script>
+
+    $(document).ready(function() {
+
+        loadSaleDetails();
+
+    });
+
+
+
+    // ==========================================
+    // LOAD SALE DETAILS
+    // ==========================================
+
+    function loadSaleDetails() {
+
+        // --------------------------------------
+        // GET SALE ID FROM URL
+        // --------------------------------------
+
+        let pathParts =
+            window.location.pathname.split("/");
+
+
+        let saleId =
+            pathParts[pathParts.length - 1];
+
+
+        if (!saleId || isNaN(saleId)) {
+
+            $("#detailsContainer").html(`
+
+                    <tr>
+
+                        <td colspan="4"
+                            class="error-message">
+
+                            Invalid sale ID.
+
+                        </td>
+
+                    </tr>
+
+                `);
+
+            return;
+
+        }
+
+
+
+        // --------------------------------------
+        // CALL API
+        // --------------------------------------
+
+        $.ajax({
+
+            url: "/api/sale/" + saleId,
+
+            type: "GET",
+
+
+            success: function(sale) {
+
+
+                if (!sale) {
+
+                    $("#detailsContainer").html(`
+
+                            <tr>
+
+                                <td colspan="4"
+                                    class="empty-message">
+
+                                    Sale not found.
+
+                                </td>
+
+                            </tr>
+
+                        `);
+
+                    return;
+
+                }
+
+
+
+                // --------------------------------------
+                // SALE HEADER
+                // --------------------------------------
+
+                $("#saleId")
+                    .text("#" + sale.saleId);
+
+
+                $("#customerName")
+                    .text(sale.customerName);
+
+
+                $("#createdBy")
+                    .text(sale.createdBy);
+
+
+                $("#saleDate")
+                    .text(
+                        new Date(
+                            sale.salesDate
+                        ).toLocaleString()
+                    );
+
+
+
+                // --------------------------------------
+                // PRODUCTS
+                // --------------------------------------
+
+                let rows = "";
+
+
+                if (
+                    !sale.items ||
+                    sale.items.length === 0
+                ) {
+
+                    rows = `
+
+                            <tr>
+
+                                <td colspan="4"
+                                    class="empty-message">
+
+                                    No products found.
+
+                                </td>
+
+                            </tr>
+
+                        `;
+
+                }
+                else {
+
+                    $.each(
+
+                        sale.items,
+
+                        function(index, detail) {
+
+                            rows += `
+
+                                    <tr>
+
+                                        <td>
+
+                                            ${detail.productName}
+
+                                        </td>
+
+
+                                        <td>
+
+                                            ${detail.quantity}
+
+                                        </td>
+
+
+                                        <td>
+
+                                            Rs.
+                                            ${Number(
+                                detail.salesPrice
+                            ).toFixed(2)}
+
+                                        </td>
+
+
+                                        <td class="amount">
+
+                                            Rs.
+                                            ${Number(
+                                detail.amount
+                            ).toFixed(2)}
+
+                                        </td>
+
+                                    </tr>
+
+                                `;
+
+                        }
+
+                    );
+
+                }
+
+
+
+                $("#detailsContainer")
+                    .html(rows);
+
+
+
+                // --------------------------------------
+                // TOTAL
+                // --------------------------------------
+
+                $("#totalAmount")
+                    .text(
+
+                        "Rs. " +
+
+                        Number(
+                            sale.totalAmount
+                        ).toFixed(2)
+
+                    );
+
+            },
+
+
+            // ==========================================
+            // ERROR
+            // ==========================================
+
+            error: function(xhr) {
+
+                let message =
+                    "Unable to load sale details.";
+
+
+                if (
+                    xhr.responseJSON &&
+                    xhr.responseJSON.message
+                ) {
+
+                    message =
+                        xhr.responseJSON.message;
+
+                }
+
+
+                $("#detailsContainer").html(`
+
+                        <tr>
+
+                            <td colspan="4"
+                                class="error-message">
+
+                                ${message}
+
+                            </td>
+
+                        </tr>
+
+                    `);
+
+            }
+
+        });
+
+    }
+
+</script>

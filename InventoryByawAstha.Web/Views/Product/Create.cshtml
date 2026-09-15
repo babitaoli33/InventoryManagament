@@ -1,0 +1,369 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>Create Product</title>
+
+    <link rel="stylesheet" href="~/css/Product/Create.css" />
+
+</head>
+
+
+<body>
+
+
+    <div class="page">
+
+
+        <div class="form-container">
+
+
+            <div class="form-header">
+
+                <h1>
+                    Create Product
+                </h1>
+
+                <p>
+                    Add a new product to inventory
+                </p>
+
+            </div>
+
+
+
+
+            <form id="productForm">
+
+
+
+                <div class="form-group">
+
+                    <label>
+                        Product Name
+                    </label>
+
+                    <input type="text"
+                           id="name"
+                           placeholder="Enter product name"
+                           required />
+
+                </div>
+
+
+
+
+                <div class="form-group">
+
+                    <label>
+                        Description
+                    </label>
+
+
+                    <textarea id="description"
+                              placeholder="Enter product description"></textarea>
+
+
+                </div>
+
+
+
+
+
+                <div class="form-group">
+
+                    <label>
+                        Product Group
+                    </label>
+
+
+                    <select id="productGroupId"
+                            required>
+
+                        <option value="">
+                            Select Product Group
+                        </option>
+
+
+                    </select>
+
+
+                </div>
+
+
+
+
+
+                <div class="form-group">
+
+
+                    <label>
+                        Unit Of Measure
+                    </label>
+
+
+                    <select id="unitOfMeasureId"
+                            required>
+
+
+                        <option value="">
+                            Select Unit
+                        </option>
+
+
+                    </select>
+
+
+
+                </div>
+
+
+
+
+
+
+                <div class="actions">
+
+
+                    <a href="/Product/Index"
+                       class="cancel-btn">
+
+                        Cancel
+
+                    </a>
+
+
+
+
+                    <button type="submit"
+                            class="save-btn">
+
+                        Create Product
+
+                    </button>
+
+
+                </div>
+
+
+
+            </form>
+
+
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+
+
+
+    <script>
+
+
+            $(document).ready(function() {
+
+
+                loadProductGroups();
+
+                loadUnits();
+
+
+
+            });
+
+
+
+
+
+            function loadProductGroups() {
+
+
+                $.ajax({
+
+                    url: "/api/product-groups",
+
+                    type: "GET",
+
+
+                    success: function(groups) {
+
+
+                        $.each(groups, function(index, group) {
+
+
+                            $("#productGroupId")
+                                .append(`
+
+                            <option value="${group.productGroupId}">
+                                ${group.name}
+                            </option>
+
+                            `);
+
+
+                        });
+
+
+                    },
+
+
+                    error: function() {
+
+                        alert("Unable to load product groups");
+
+                    }
+
+
+                });
+
+
+            }
+
+
+
+
+
+
+            function loadUnits() {
+
+
+                $.ajax({
+
+                    url: "/api/unitofmeasure",
+
+                    type: "GET",
+
+
+                    success: function(units) {
+
+
+                        $.each(units, function(index, unit) {
+
+
+                            $("#unitOfMeasureId")
+                                .append(`
+
+                            <option value="${unit.unitOfMeasureId}">
+                                ${unit.name}
+                            </option>
+
+                            `);
+
+
+
+                        });
+
+
+                    },
+
+
+                    error: function() {
+
+                        alert("Unable to load units");
+
+                    }
+
+
+                });
+
+
+            }
+
+
+
+
+
+
+
+            $("#productForm").submit(function(e) {
+
+
+                e.preventDefault();
+
+
+
+                let product = {
+
+
+                    name: $("#name").val(),
+
+                    description: $("#description").val(),
+
+                    productGroupId: $("#productGroupId").val(),
+
+                    unitOfMeasureId: $("#unitOfMeasureId").val()
+
+
+                };
+
+
+
+
+
+
+                $.ajax({
+
+                    url: "/api/product",
+
+                    type: "POST",
+
+                    contentType: "application/json",
+
+                    data: JSON.stringify(product),
+
+
+                    success: function(response) {
+
+
+                        alert(response.message);
+
+
+                        window.location.href = "/Product/Index";
+
+
+                    },
+
+
+                    error: function(xhr) {
+
+
+                        alert("Unable to create product");
+
+
+                    }
+
+
+
+                });
+
+
+
+            });
+
+
+
+
+
+    </script>
+
+
+
+
+</body>
+
+</html>

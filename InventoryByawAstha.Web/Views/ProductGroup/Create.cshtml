@@ -1,0 +1,173 @@
+﻿@{
+    Layout = null;
+}
+
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>Create Product Group</title>
+
+    <link rel="stylesheet" href="~/css/ProductGroup/Create.css" />
+
+</head>
+
+
+<body>
+
+
+    <div class="page">
+
+
+        <div class="form-card">
+
+
+            <div class="form-header">
+
+                <h1>
+                    Create Product Group
+                </h1>
+
+                <p>
+                    Add a new category to organize products
+                </p>
+
+            </div>
+
+
+
+            <div class="form-group">
+
+                <label>
+                    Name
+                </label>
+
+                <input id="name"
+                       placeholder="Enter group name" />
+
+            </div>
+
+
+
+
+            <div class="form-group">
+
+                <label>
+                    Description
+                </label>
+
+                <textarea id="description"
+                          placeholder="Enter description"></textarea>
+
+            </div>
+
+
+
+
+            <div class="status-row">
+
+                <label>
+                    Active
+                </label>
+
+
+                <input type="checkbox"
+                       id="isActive"
+                       checked />
+
+            </div>
+
+
+
+
+            <button onclick="createProductGroup()">
+
+                Create Group
+
+            </button>
+
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+
+    <script>
+
+
+            function createProductGroup() {
+
+
+                let data = {
+
+
+                    name: $("#name").val(),
+
+                    description: $("#description").val(),
+
+                    isActive: $("#isActive").is(":checked")
+
+
+                };
+
+
+
+                $.ajax({
+
+
+                    url: "/api/product-groups",
+
+                    type: "POST",
+
+                    contentType: "application/json",
+
+                    data: JSON.stringify(data),
+
+
+
+                    success: function(response) {
+
+
+                        alert(response.message);
+
+
+                        window.location.href = "/ProductGroup/Index";
+
+
+                    },
+
+
+                    error: function() {
+
+
+                        alert("Unable to create product group");
+
+
+                    }
+
+
+                });
+
+
+
+            }
+
+
+
+    </script>
+
+
+
+</body>
+
+</html>

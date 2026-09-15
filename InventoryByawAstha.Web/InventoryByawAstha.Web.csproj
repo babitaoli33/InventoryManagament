@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>f42673ed-2a6e-4128-b4b0-93eeab2e5b95</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.11">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\InventoryByawAstha.BLL\InventoryByawAstha.BLL.csproj" />
+    <ProjectReference Include="..\InventoryByawAstha.DAL\InventoryByawAstha.DAL.csproj" />
+    <ProjectReference Include="..\InventoryByawAstha.Domain\InventoryByawAstha.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

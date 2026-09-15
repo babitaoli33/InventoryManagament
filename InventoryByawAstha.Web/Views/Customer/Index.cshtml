@@ -1,0 +1,292 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<title>Customers</title>
+
+<link rel="stylesheet" href="~/css/Customer/Index.css" />
+
+
+<div class="page">
+
+    <!-- =========================
+         HEADER
+    ========================= -->
+
+    <div class="header">
+
+        <div>
+
+            <h1>
+                Customers
+            </h1>
+
+            <p>
+                Manage and view your customers
+            </p>
+
+        </div>
+
+
+        <div class="header-actions">
+
+            <a href="/Customer/Create"
+               class="create-btn">
+
+                + New Customer
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         CUSTOMER TABLE
+    ========================= -->
+
+    <div class="customer-card">
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Customer ID
+                        </th>
+
+                        <th>
+                            Name
+                        </th>
+
+                        <th>
+                            Phone
+                        </th>
+
+                        <th>
+                            Address
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Created By
+                        </th>
+
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="customerContainer">
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     JQUERY
+========================= -->
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+
+<script>
+
+    $(document).ready(function() {
+
+        loadCustomers();
+
+    });
+
+
+    // =========================
+    // LOAD CUSTOMERS
+    // =========================
+
+    function loadCustomers() {
+
+        $.ajax({
+
+            url: "/api/customer",
+
+            type: "GET",
+
+            success: function(customers) {
+
+                let rows = "";
+
+
+                if (!customers ||
+                    customers.length === 0) {
+
+                    rows = `
+
+                            <tr>
+
+                                <td colspan="7"
+                                    class="empty-message">
+
+                                    No customers found.
+
+                                </td>
+
+                            </tr>
+
+                        `;
+
+                }
+                else {
+
+                    $.each(
+                        customers,
+                        function(index, customer) {
+
+                            let status =
+                                customer.isActive
+                                    ? "Active"
+                                    : "Disabled";
+
+
+                            let statusClass =
+                                customer.isActive
+                                    ? "status-active"
+                                    : "status-disabled";
+
+
+                            rows += `
+
+                                    <tr>
+
+                                        <td>
+
+                                            #${customer.customerId}
+
+                                        </td>
+
+
+                                        <td>
+
+                                            ${customer.name}
+
+                                        </td>
+
+
+                                        <td>
+
+                                            ${customer.phone ?? "-"}
+
+                                        </td>
+
+
+                                        <td>
+
+                                            ${customer.address ?? "-"}
+
+                                        </td>
+
+
+                                        <td>
+
+                                            <span class="${statusClass}">
+
+                                                ${status}
+
+                                            </span>
+
+                                        </td>
+
+
+                                        <td>
+
+                                            ${customer.createdBy ?? "-"}
+
+                                        </td>
+
+
+                                        <td>
+
+                                            <a
+                                                href="/Customer/Edit/${customer.customerId}"
+                                                class="edit-btn">
+
+                                                Edit
+
+                                            </a>
+
+                                        </td>
+
+                                    </tr>
+
+                                `;
+
+                        }
+                    );
+
+                }
+
+
+                $("#customerContainer")
+                    .html(rows);
+
+            },
+
+
+            error: function(xhr) {
+
+                let message =
+                    "Unable to load customers.";
+
+
+                if (
+                    xhr.responseJSON &&
+                    xhr.responseJSON.message
+                ) {
+
+                    message =
+                        xhr.responseJSON.message;
+
+                }
+
+
+                $("#customerContainer").html(`
+
+                        <tr>
+
+                            <td colspan="7"
+                                class="error-message">
+
+                                ${message}
+
+                            </td>
+
+                        </tr>
+
+                    `);
+
+            }
+
+        });
+
+    }
+
+</script>

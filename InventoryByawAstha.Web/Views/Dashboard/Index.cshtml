@@ -1,0 +1,962 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<title>Dashboard</title>
+
+<link rel="stylesheet"
+      href="~/css/Dashboard/Index.css" />
+
+
+<div class="dashboard-page">
+
+    <!-- ==========================================
+         HEADER
+    ========================================== -->
+
+    <div class="dashboard-header">
+
+        <div>
+
+            <h1>
+                Dashboard
+            </h1>
+
+            <p>
+                Overview of your inventory and business activity
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================
+         LOADING
+    ========================================== -->
+
+    <div id="dashboardLoading"
+         class="dashboard-loading">
+
+        <div class="loading-spinner"></div>
+
+        <span>
+            Loading dashboard...
+        </span>
+
+    </div>
+
+
+    <!-- ==========================================
+         ERROR
+    ========================================== -->
+
+    <div id="dashboardError"
+         class="dashboard-error">
+
+        Unable to load dashboard data.
+
+    </div>
+
+
+    <!-- ==========================================
+         DASHBOARD CONTENT
+    ========================================== -->
+
+    <div id="dashboardContent"
+         class="dashboard-content">
+
+
+        <!-- ======================================
+             SUMMARY CARDS
+        ====================================== -->
+
+        <div class="summary-grid">
+
+
+            <!-- PRODUCTS -->
+
+            <div class="summary-card">
+
+                <div class="summary-icon products-icon">
+
+                    <i class="fa-solid fa-box"></i>
+
+                </div>
+
+                <div class="summary-info">
+
+                    <span class="summary-label">
+                        Total Products
+                    </span>
+
+                    <strong id="totalProducts">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- CUSTOMERS -->
+
+            <div class="summary-card">
+
+                <div class="summary-icon customers-icon">
+
+                    <i class="fa-solid fa-users"></i>
+
+                </div>
+
+                <div class="summary-info">
+
+                    <span class="summary-label">
+                        Total Customers
+                    </span>
+
+                    <strong id="totalCustomers">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- VENDORS -->
+
+            <div class="summary-card">
+
+                <div class="summary-icon vendors-icon">
+
+                    <i class="fa-solid fa-truck"></i>
+
+                </div>
+
+                <div class="summary-info">
+
+                    <span class="summary-label">
+                        Total Vendors
+                    </span>
+
+                    <strong id="totalVendors">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- USERS -->
+
+            <div class="summary-card">
+
+                <div class="summary-icon users-icon">
+
+                    <i class="fa-solid fa-user"></i>
+
+                </div>
+
+                <div class="summary-info">
+
+                    <span class="summary-label">
+                        Total Users
+                    </span>
+
+                    <strong id="totalUsers">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- ======================================
+             STOCK CARDS
+        ====================================== -->
+
+        <div class="summary-grid stock-grid">
+
+
+            <!-- TOTAL STOCK -->
+
+            <div class="summary-card">
+
+                <div class="summary-icon stock-icon">
+
+                    <i class="fa-solid fa-cubes-stacked"></i>
+
+                </div>
+
+                <div class="summary-info">
+
+                    <span class="summary-label">
+                        Available Stock
+                    </span>
+
+                    <strong id="totalStock">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- LOW STOCK -->
+
+            <div class="summary-card">
+
+                <div class="summary-icon low-stock-icon">
+
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+
+                </div>
+
+                <div class="summary-info">
+
+                    <span class="summary-label">
+                        Low Stock Products
+                    </span>
+
+                    <strong id="lowStockProducts">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- OUT OF STOCK -->
+
+            <div class="summary-card">
+
+                <div class="summary-icon out-stock-icon">
+
+                    <i class="fa-solid fa-circle-xmark"></i>
+
+                </div>
+
+                <div class="summary-info">
+
+                    <span class="summary-label">
+                        Out of Stock
+                    </span>
+
+                    <strong id="outOfStockProducts">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- ======================================
+             FINANCIAL CARDS
+        ====================================== -->
+
+        <div class="summary-grid financial-grid">
+
+
+            <!-- PURCHASES -->
+
+            <div class="summary-card">
+
+                <div class="summary-icon purchase-icon">
+
+                    <i class="fa-solid fa-cart-shopping"></i>
+
+                </div>
+
+                <div class="summary-info">
+
+                    <span class="summary-label">
+                        Total Purchases
+                    </span>
+
+                    <strong id="totalPurchaseAmount">
+                        Rs. 0.00
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- SALES -->
+
+            <div class="summary-card">
+
+                <div class="summary-icon sales-icon">
+
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
+
+                </div>
+
+                <div class="summary-info">
+
+                    <span class="summary-label">
+                        Total Sales
+                    </span>
+
+                    <strong id="totalSalesAmount">
+                        Rs. 0.00
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- ======================================
+             RECENT ACTIVITY
+        ====================================== -->
+
+        <div class="recent-grid">
+
+
+            <!-- ==================================
+                 RECENT PURCHASES
+            ================================== -->
+
+            <div class="activity-card">
+
+
+                <div class="activity-header">
+
+                    <div>
+
+                        <h2>
+                            Recent Purchases
+                        </h2>
+
+                        <p>
+                            Latest purchase transactions
+                        </p>
+
+                    </div>
+
+
+                    <a href="/Purchase/Index"
+                       class="view-all-btn">
+
+                        View All
+
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </a>
+
+                </div>
+
+
+
+                <div class="activity-table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    ID
+                                </th>
+
+                                <th>
+                                    Vendor
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                                <th>
+                                    Amount
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="recentPurchasesContainer">
+
+                            <tr>
+
+                                <td colspan="4"
+                                    class="table-loading">
+
+                                    Loading...
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- ==================================
+                 RECENT SALES
+            ================================== -->
+
+            <div class="activity-card">
+
+
+                <div class="activity-header">
+
+                    <div>
+
+                        <h2>
+                            Recent Sales
+                        </h2>
+
+                        <p>
+                            Latest sales transactions
+                        </p>
+
+                    </div>
+
+
+                    <a href="/Sale/Index"
+                       class="view-all-btn">
+
+                        View All
+
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </a>
+
+                </div>
+
+
+
+                <div class="activity-table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    ID
+                                </th>
+
+                                <th>
+                                    Customer
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                                <th>
+                                    Amount
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="recentSalesContainer">
+
+                            <tr>
+
+                                <td colspan="4"
+                                    class="table-loading">
+
+                                    Loading...
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- ==========================================
+     JQUERY
+========================================== -->
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+
+<script>
+
+    $(document).ready(function() {
+
+        loadDashboard();
+
+    });
+
+
+
+    // ==========================================
+    // LOAD DASHBOARD
+    // ==========================================
+
+    function loadDashboard() {
+
+        $("#dashboardLoading")
+            .show();
+
+        $("#dashboardContent")
+            .hide();
+
+        $("#dashboardError")
+            .hide();
+
+
+        $.ajax({
+
+            url: "/api/dashboard",
+
+            type: "GET",
+
+
+            success: function(dashboard) {
+
+                displayDashboard(dashboard);
+
+                $("#dashboardLoading")
+                    .hide();
+
+                $("#dashboardContent")
+                    .fadeIn(400);
+
+            },
+
+
+            error: function(xhr) {
+
+                let message =
+                    "Unable to load dashboard data.";
+
+
+                if (
+                    xhr.responseJSON &&
+                    xhr.responseJSON.message
+                ) {
+
+                    message =
+                        xhr.responseJSON.message;
+
+                }
+
+
+                $("#dashboardLoading")
+                    .hide();
+
+
+                $("#dashboardError")
+                    .text(message)
+                    .fadeIn(300);
+
+            }
+
+        });
+
+    }
+
+
+
+    // ==========================================
+    // DISPLAY DASHBOARD
+    // ==========================================
+
+    function displayDashboard(dashboard) {
+
+
+        // ======================================
+        // SUMMARY
+        // ======================================
+
+        $("#totalProducts")
+            .text(dashboard.totalProducts ?? 0);
+
+
+        $("#totalCustomers")
+            .text(dashboard.totalCustomers ?? 0);
+
+
+        $("#totalVendors")
+            .text(dashboard.totalVendors ?? 0);
+
+
+        $("#totalUsers")
+            .text(dashboard.totalUsers ?? 0);
+
+
+
+        // ======================================
+        // STOCK
+        // ======================================
+
+        $("#totalStock")
+            .text(dashboard.totalStock ?? 0);
+
+
+        $("#lowStockProducts")
+            .text(dashboard.lowStockProducts ?? 0);
+
+
+        $("#outOfStockProducts")
+            .text(dashboard.outOfStockProducts ?? 0);
+
+
+
+        // ======================================
+        // FINANCIAL
+        // ======================================
+
+        $("#totalPurchaseAmount")
+            .text(
+                formatCurrency(
+                    dashboard.totalPurchaseAmount
+                )
+            );
+
+
+        $("#totalSalesAmount")
+            .text(
+                formatCurrency(
+                    dashboard.totalSalesAmount
+                )
+            );
+
+
+
+        // ======================================
+        // RECENT PURCHASES
+        // ======================================
+
+        displayRecentPurchases(
+            dashboard.recentPurchases
+        );
+
+
+
+        // ======================================
+        // RECENT SALES
+        // ======================================
+
+        displayRecentSales(
+            dashboard.recentSales
+        );
+
+    }
+
+
+
+    // ==========================================
+    // RECENT PURCHASES
+    // ==========================================
+
+    function displayRecentPurchases(purchases) {
+
+        const container =
+            $("#recentPurchasesContainer");
+
+
+        container.empty();
+
+
+        if (
+            !purchases ||
+            purchases.length === 0
+        ) {
+
+            container.html(`
+
+                    <tr>
+
+                        <td colspan="4"
+                            class="empty-message">
+
+                            No recent purchases found.
+
+                        </td>
+
+                    </tr>
+
+                `);
+
+            return;
+
+        }
+
+
+        $.each(
+            purchases,
+            function(index, purchase) {
+
+                container.append(`
+
+                        <tr>
+
+                            <td>
+
+                                #${purchase.purchaseId}
+
+                            </td>
+
+
+                            <td>
+
+                                ${escapeHtml(
+                    purchase.vendorName ?? "-"
+                )}
+
+                            </td>
+
+
+                            <td>
+
+                                ${formatDate(
+                    purchase.purchaseDate
+                )}
+
+                            </td>
+
+
+                            <td>
+
+                                <strong class="amount">
+
+                                    ${formatCurrency(
+                    purchase.totalAmount
+                )}
+
+                                </strong>
+
+                            </td>
+
+                        </tr>
+
+                    `);
+
+            }
+        );
+
+    }
+
+
+
+    // ==========================================
+    // RECENT SALES
+    // ==========================================
+
+    function displayRecentSales(sales) {
+
+        const container =
+            $("#recentSalesContainer");
+
+
+        container.empty();
+
+
+        if (
+            !sales ||
+            sales.length === 0
+        ) {
+
+            container.html(`
+
+                    <tr>
+
+                        <td colspan="4"
+                            class="empty-message">
+
+                            No recent sales found.
+
+                        </td>
+
+                    </tr>
+
+                `);
+
+            return;
+
+        }
+
+
+        $.each(
+            sales,
+            function(index, sale) {
+
+                container.append(`
+
+                        <tr>
+
+                            <td>
+
+                                #${sale.saleId}
+
+                            </td>
+
+
+                            <td>
+
+                                ${escapeHtml(
+                    sale.customerName ?? "-"
+                )}
+
+                            </td>
+
+
+                            <td>
+
+                                ${formatDate(
+                    sale.saleDate
+                )}
+
+                            </td>
+
+
+                            <td>
+
+                                <strong class="amount">
+
+                                    ${formatCurrency(
+                    sale.totalAmount
+                )}
+
+                                </strong>
+
+                            </td>
+
+                        </tr>
+
+                    `);
+
+            }
+        );
+
+    }
+
+
+
+    // ==========================================
+    // FORMAT CURRENCY
+    // ==========================================
+
+    function formatCurrency(amount) {
+
+        const value =
+            Number(amount) || 0;
+
+
+        return "Rs. " +
+            value.toLocaleString(
+                "en-IN",
+                {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }
+            );
+
+    }
+
+
+
+    // ==========================================
+    // FORMAT DATE
+    // ==========================================
+
+    function formatDate(date) {
+
+        if (!date) {
+
+            return "-";
+
+        }
+
+
+        const parsedDate =
+            new Date(date);
+
+
+        if (isNaN(parsedDate.getTime())) {
+
+            return "-";
+
+        }
+
+
+        return parsedDate.toLocaleDateString(
+            "en-GB",
+            {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+            }
+        );
+
+    }
+
+
+
+    // ==========================================
+    // ESCAPE HTML
+    // ==========================================
+
+    function escapeHtml(value) {
+
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+    }
+
+</script>

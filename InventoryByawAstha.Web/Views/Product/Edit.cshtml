@@ -1,0 +1,655 @@
+﻿@model InventoryByawAstha.Web.ViewModels.Product.ProductEditViewModel
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Edit Product";
+}
+
+@section Styles {
+
+    <link rel="stylesheet"
+          href="~/css/Product/Edit.css" />
+
+}
+
+
+<div class="page">
+
+    <div class="form-container">
+
+        <div class="form-header">
+
+            <h1>
+                Edit Product
+            </h1>
+
+            <p>
+                Update product information
+            </p>
+
+        </div>
+
+
+        <form id="productForm">
+
+
+            <!-- PRODUCT ID -->
+
+            <input type="hidden"
+                   id="productId"
+                   value="@Model.ProductId" />
+
+
+
+            <!-- PRODUCT NAME -->
+
+            <div class="form-group">
+
+                <label>
+                    Product Name
+                </label>
+
+                <input type="text"
+                       id="name"
+                       required />
+
+            </div>
+
+
+
+            <!-- DESCRIPTION -->
+
+            <div class="form-group">
+
+                <label>
+                    Description
+                </label>
+
+                <textarea id="description"></textarea>
+
+            </div>
+
+
+
+            <!-- PRODUCT GROUP -->
+
+            <div class="form-group">
+
+                <label>
+                    Product Group
+                </label>
+
+                <select id="productGroupId"
+                        required>
+
+                    <option value="">
+                        Select Product Group
+                    </option>
+
+                </select>
+
+            </div>
+
+
+
+            <!-- UNIT OF MEASURE -->
+
+            <div class="form-group">
+
+                <label>
+                    Unit Of Measure
+                </label>
+
+                <select id="unitOfMeasureId"
+                        required>
+
+                    <option value="">
+                        Select Unit
+                    </option>
+
+                </select>
+
+            </div>
+
+
+
+            <!-- ACTIVE -->
+
+            <div class="form-group checkbox">
+
+                <input type="checkbox"
+                       id="isActive" />
+
+                <label>
+                    Active Product
+                </label>
+
+            </div>
+
+
+
+            <!-- ACTIONS -->
+
+            <div class="actions">
+
+                <a href="/Product/Index"
+                   class="cancel-btn">
+
+                    Cancel
+
+                </a>
+
+
+                <button type="submit"
+                        class="save-btn">
+
+                    Update Product
+
+                </button>
+
+            </div>
+
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+
+<script>
+
+    // ==========================================
+    // PRODUCT ID
+    // ==========================================
+
+    let productId =
+        $("#productId").val();
+
+
+    let currentProduct;
+
+
+
+    // ==========================================
+    // PAGE LOAD
+    // ==========================================
+
+    $(document).ready(function() {
+
+        loadEditPage();
+
+    });
+
+
+
+    // ==========================================
+    // LOAD EVERYTHING
+    // ==========================================
+
+    async function loadEditPage() {
+
+        try {
+
+            // First load the dropdowns
+
+            await loadProductGroups();
+
+            await loadUnits();
+
+
+            // Then load the product
+
+            await loadProduct();
+
+        }
+        catch (error) {
+
+            console.error(error);
+
+            alert(
+                "Unable to load product information."
+            );
+
+        }
+
+    }
+
+
+
+    // ==========================================
+    // LOAD PRODUCT
+    // ==========================================
+
+    function loadProduct() {
+
+        return $.ajax({
+
+            url:
+                `/api/product/${productId}`,
+
+            type:
+                "GET",
+
+
+            success:
+                function(product) {
+
+                    currentProduct =
+                        product;
+
+
+                    // ==================================
+                    // BASIC INFORMATION
+                    // ==================================
+
+                    $("#name")
+                        .val(product.name);
+
+
+                    $("#description")
+                        .val(product.description);
+
+
+                    $("#isActive")
+                        .prop(
+                            "checked",
+                            product.isActive
+                        );
+
+
+
+                    // ==================================
+                    // SELECT PRODUCT GROUP
+                    // ==================================
+
+                    $("#productGroupId")
+                        .val(
+                            product.productGroupId
+                        );
+
+
+
+                    // ==================================
+                    // SELECT UNIT
+                    // ==================================
+
+                    $("#unitOfMeasureId")
+                        .val(
+                            product.unitOfMeasureId
+                        );
+
+
+
+                    // ==================================
+                    // DEBUG
+                    // ==================================
+
+                    console.log(
+                        "Product:",
+                        product
+                    );
+
+                    console.log(
+                        "Product Group ID:",
+                        product.productGroupId
+                    );
+
+                    console.log(
+                        "Unit ID:",
+                        product.unitOfMeasureId
+                    );
+
+                },
+
+
+            error:
+                function(xhr) {
+
+                    console.error(
+                        xhr.responseText
+                    );
+
+                    alert(
+                        "Unable to load product"
+                    );
+
+                }
+
+        });
+
+    }
+
+
+
+    // ==========================================
+    // LOAD PRODUCT GROUPS
+    // ==========================================
+
+    function loadProductGroups() {
+
+        return $.ajax({
+
+            url:
+                "/api/product-groups",
+
+            type:
+                "GET",
+
+
+            success:
+                function(groups) {
+
+                    let dropdown =
+                        $("#productGroupId");
+
+
+                    // Remove old options
+
+                    dropdown.empty();
+
+
+                    // Default option
+
+                    dropdown.append(`
+
+                            <option value="">
+                                Select Product Group
+                            </option>
+
+                        `);
+
+
+                    // Add groups
+
+                    $.each(
+                        groups,
+                        function(index, group) {
+
+                            dropdown.append(`
+
+                                    <option value="${group.productGroupId}">
+                                        ${escapeHtml(group.name)}
+                                    </option>
+
+                                `);
+
+                        }
+                    );
+
+                },
+
+
+            error:
+                function(xhr) {
+
+                    console.error(
+                        xhr.responseText
+                    );
+
+                    throw new Error(
+                        "Unable to load product groups"
+                    );
+
+                }
+
+        });
+
+    }
+
+
+
+    // ==========================================
+    // LOAD UNITS
+    // ==========================================
+
+    function loadUnits() {
+
+        return $.ajax({
+
+            url:
+                "/api/unitofmeasure",
+
+            type:
+                "GET",
+
+
+            success:
+                function(units) {
+
+                    let dropdown =
+                        $("#unitOfMeasureId");
+
+
+                    // Remove old options
+
+                    dropdown.empty();
+
+
+                    // Default option
+
+                    dropdown.append(`
+
+                            <option value="">
+                                Select Unit
+                            </option>
+
+                        `);
+
+
+                    // Add units
+
+                    $.each(
+                        units,
+                        function(index, unit) {
+
+                            dropdown.append(`
+
+                                    <option value="${unit.unitOfMeasureId}">
+                                        ${escapeHtml(unit.name)}
+                                    </option>
+
+                                `);
+
+                        }
+                    );
+
+                },
+
+
+            error:
+                function(xhr) {
+
+                    console.error(
+                        xhr.responseText
+                    );
+
+                    throw new Error(
+                        "Unable to load units"
+                    );
+
+                }
+
+        });
+
+    }
+
+
+
+    // ==========================================
+    // UPDATE PRODUCT
+    // ==========================================
+
+    $("#productForm").submit(function(e) {
+
+        e.preventDefault();
+
+
+
+        let product = {
+
+            name:
+                $("#name")
+                    .val()
+                    .trim(),
+
+
+            description:
+                $("#description")
+                    .val()
+                    .trim(),
+
+
+            productGroupId:
+                Number(
+                    $("#productGroupId")
+                        .val()
+                ),
+
+
+            unitOfMeasureId:
+                Number(
+                    $("#unitOfMeasureId")
+                        .val()
+                ),
+
+
+            isActive:
+                $("#isActive")
+                    .is(":checked")
+
+        };
+
+
+
+        // ==========================================
+        // VALIDATION
+        // ==========================================
+
+        if (!product.name) {
+
+            alert(
+                "Please enter product name."
+            );
+
+            return;
+
+        }
+
+
+        if (!product.productGroupId) {
+
+            alert(
+                "Please select a product group."
+            );
+
+            return;
+
+        }
+
+
+        if (!product.unitOfMeasureId) {
+
+            alert(
+                "Please select a unit of measure."
+            );
+
+            return;
+
+        }
+
+
+
+        // ==========================================
+        // SEND UPDATE
+        // ==========================================
+
+        $.ajax({
+
+            url:
+                `/api/product/${productId}`,
+
+            type:
+                "PUT",
+
+            contentType:
+                "application/json",
+
+
+            data:
+                JSON.stringify(product),
+
+
+            success:
+                function(response) {
+
+                    alert(
+                        response.message ||
+                        "Product updated successfully."
+                    );
+
+
+                    window.location.href =
+                        "/Product/Index";
+
+                },
+
+
+            error:
+                function(xhr) {
+
+                    console.error(
+                        xhr.responseText
+                    );
+
+
+                    let message =
+                        "Unable to update product";
+
+
+                    if (
+                        xhr.responseJSON &&
+                        xhr.responseJSON.message
+                    ) {
+
+                        message =
+                            xhr.responseJSON.message;
+
+                    }
+
+
+                    alert(message);
+
+                }
+
+        });
+
+    });
+
+
+
+    // ==========================================
+    // ESCAPE HTML
+    // ==========================================
+
+    function escapeHtml(value) {
+
+        return String(value)
+
+            .replace(/&/g, "&amp;")
+
+            .replace(/</g, "&lt;")
+
+            .replace(/>/g, "&gt;")
+
+            .replace(/"/g, "&quot;")
+
+            .replace(/'/g, "&#039;");
+
+    }
+
+</script>

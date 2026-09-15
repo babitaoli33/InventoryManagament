@@ -1,0 +1,459 @@
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+    background: radial-gradient( circle at top left, rgba(99, 102, 241, .10), transparent 35% ), radial-gradient( circle at bottom right, rgba(56, 189, 248, .10), transparent 35% ), #f8fafc;
+    color: #0f172a;
+}
+
+
+/* =========================================================
+   APP
+========================================================= */
+
+.app {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    position: relative;
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar {
+    width: 260px;
+    min-width: 260px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    background: rgba(255, 255, 255, .78);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border-right: 1px solid rgba(148, 163, 184, .18);
+    box-shadow: 10px 0 40px rgba(15, 23, 42, .06);
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 1000;
+}
+
+
+/* =========================================================
+   LOGO
+========================================================= */
+
+.logo {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 25px 0;
+    flex-shrink: 0;
+}
+
+
+    .logo img {
+        width: 120px;
+        height: auto;
+        object-fit: contain;
+        border-radius: 18px;
+        transition: transform .3s ease, filter .3s ease;
+    }
+
+
+        .logo img:hover {
+            transform: scale(1.08);
+            filter: drop-shadow( 0 12px 20px rgba(99, 102, 241, .20) );
+        }
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+.navigation {
+    width: 100%;
+    flex: 1;
+    padding: 0 15px 20px;
+}
+
+
+    /* =========================================================
+   NAVIGATION LINKS
+========================================================= */
+
+    .navigation a {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        width: 100%;
+        min-width: 0;
+        padding: 13px 16px;
+        margin-bottom: 6px;
+        border-radius: 15px;
+        color: #475569;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        white-space: nowrap;
+        transition: background .3s ease, color .3s ease, transform .3s ease, box-shadow .3s ease;
+    }
+
+
+        /* =========================================================
+   NAVIGATION ICON
+========================================================= */
+
+        .navigation a i {
+            width: 20px;
+            min-width: 20px;
+            text-align: center;
+            font-size: 16px;
+            color: #64748b;
+            transition: color .3s ease, transform .3s ease;
+        }
+
+
+        /* =========================================================
+   NAVIGATION TEXT
+========================================================= */
+
+        .navigation a span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+
+        /* =========================================================
+   NAVIGATION HOVER
+========================================================= */
+
+        .navigation a:hover {
+            background: linear-gradient( 135deg, rgba(37, 99, 235, .10), rgba(99, 102, 241, .10) );
+            color: #2563eb;
+            transform: translateX(4px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, .08);
+        }
+
+
+            .navigation a:hover i {
+                color: #2563eb;
+                transform: scale(1.1);
+            }
+
+
+        /* =========================================================
+   ACTIVE NAVIGATION
+========================================================= */
+
+        .navigation a.active {
+            background: linear-gradient( 135deg, #2563eb, #6366f1 );
+            color: white;
+            box-shadow: 0 12px 30px rgba(37, 99, 235, .25);
+        }
+
+
+            .navigation a.active i {
+                color: white;
+            }
+
+
+/* =========================================================
+   MENU TITLES
+========================================================= */
+
+.menu-title {
+    margin: 26px 16px 10px;
+    color: #94a3b8;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+.logout {
+    width: 100%;
+    padding: 15px;
+    flex-shrink: 0;
+    border-top: 1px solid rgba(148, 163, 184, .15);
+}
+
+
+    .logout a {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        width: 100%;
+        padding: 13px 16px;
+        border-radius: 15px;
+        color: #dc2626;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        transition: background .3s ease, transform .3s ease, box-shadow .3s ease;
+    }
+
+
+        .logout a i {
+            width: 20px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+
+        .logout a:hover {
+            background: rgba(239, 68, 68, .10);
+            transform: translateX(4px);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, .08);
+        }
+
+
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
+
+.content {
+    margin-left: 270px;
+    width: calc(100% - 270px);
+    min-width: 0;
+    min-height: 100vh;
+    padding: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+
+    /* =========================================================
+   IMPORTANT:
+   PREVENT CHILD PAGES FROM BREAKING THE LAYOUT
+========================================================= */
+
+    .content > * {
+        max-width: 100%;
+    }
+
+
+    /* =========================================================
+   TABLE SAFETY
+========================================================= */
+
+    .content table {
+        max-width: 100%;
+    }
+
+
+/* =========================================================
+   SCROLLBAR — SIDEBAR
+========================================================= */
+
+.sidebar::-webkit-scrollbar {
+    width: 7px;
+}
+
+
+.sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, .35);
+    border-radius: 20px;
+}
+
+
+    .sidebar::-webkit-scrollbar-thumb:hover {
+        background: rgba(100, 116, 139, .55);
+    }
+
+
+/* =========================================================
+   SCROLLBAR — PAGE
+========================================================= */
+
+::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+}
+
+
+::-webkit-scrollbar-track {
+    background: rgba(241, 245, 249, .8);
+}
+
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 20px;
+}
+
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
+
+
+/* =========================================================
+   SWEET ALERT
+========================================================= */
+
+.ios-popup {
+    border-radius: 32px !important;
+    background: rgba(255, 255, 255, .78) !important;
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    box-shadow: 0 30px 80px rgba(15, 23, 42, .20) !important;
+    padding: 35px !important;
+}
+
+
+.ios-title {
+    font-size: 28px !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+}
+
+
+.logout-text {
+    color: #64748b;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+
+.ios-confirm {
+    border-radius: 16px !important;
+    padding: 12px 28px !important;
+    background: linear-gradient( 135deg, #2563eb, #6366f1 ) !important;
+    font-weight: 600 !important;
+}
+
+
+.ios-cancel {
+    border-radius: 16px !important;
+    padding: 12px 28px !important;
+    background: #f1f5f9 !important;
+    color: #334155 !important;
+    font-weight: 600 !important;
+}
+
+
+/* =========================================================
+   RESPONSIVE — TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .sidebar {
+        width: 230px;
+        min-width: 230px;
+    }
+
+
+    .content {
+        margin-left: 230px;
+        width: calc(100% - 230px);
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE — MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .sidebar {
+        width: 80px;
+        min-width: 80px;
+    }
+
+
+    .content {
+        margin-left: 80px;
+        width: calc(100% - 80px);
+    }
+
+
+    .navigation {
+        padding: 0 10px 20px;
+    }
+
+
+        .navigation a {
+            justify-content: center;
+            padding: 13px 10px;
+        }
+
+
+            .navigation a span {
+                display: none;
+            }
+
+
+            .navigation a i {
+                margin: 0;
+            }
+
+
+    .menu-title {
+        display: none;
+    }
+
+
+    .logout {
+        padding: 10px;
+    }
+
+
+        .logout a {
+            justify-content: center;
+            padding: 13px 10px;
+        }
+
+
+            .logout a span {
+                display: none;
+            }
+
+
+            .logout a i {
+                margin: 0;
+            }
+
+
+    .logo {
+        padding: 20px 0;
+    }
+
+
+        .logo img {
+            width: 55px;
+            border-radius: 14px;
+        }
+}

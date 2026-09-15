@@ -1,0 +1,84 @@
+﻿@model InventoryByawAstha.BLL.src.DTOs.UserDTOs.UserDetailsDTO
+
+
+@{
+    Layout = null;
+}
+
+
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>Delete User</title>
+
+    <link rel="stylesheet" href="~/css/User/Form.css" />
+
+</head>
+
+
+<body>
+
+
+    <div class="center-page">
+
+
+        <div class="glass-card">
+
+
+            <h1>
+                Delete User
+            </h1>
+
+
+            <p>
+                Are you sure you want to delete
+                <h1>
+                    @Model.Name
+                </h1>
+                ?
+            </p>
+
+
+
+            <form asp-action="DeleteUser"
+                  method="post">
+
+
+                <input asp-for="UserId"
+                       type="hidden" />
+
+
+
+                <button class="delete-btn">
+
+                    Delete
+
+                </button>
+
+
+
+                <a asp-action="Index"
+                   class="cancel-btn">
+
+                    Cancel
+
+                </a>
+
+
+
+            </form>
+
+
+        </div>
+
+
+    </div>
+
+
+</body>
+
+</html>

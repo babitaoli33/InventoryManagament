@@ -1,0 +1,218 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>Product Groups</title>
+
+    <link rel="stylesheet" href="~/css/ProductGroup/Index.css" />
+
+</head>
+
+
+<body>
+
+
+    <div class="page">
+
+
+        <div class="header">
+
+
+            <div>
+
+                <h1>
+                    Product Groups
+                </h1>
+
+                <p>
+                    Organize products into categories
+                </p>
+
+            </div>
+
+
+
+            <div class="header-actions">
+
+
+                <a href="/ProductGroup/Create"
+                   class="create-btn">
+
+                    + Add Group
+
+                </a>
+
+
+            </div>
+
+
+
+        </div>
+
+
+
+
+
+        <div id="productGroupContainer"
+             class="group-grid">
+        </div>
+
+
+
+
+    </div>
+
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+
+    <script>
+
+
+            $(document).ready(function() {
+
+                loadGroups();
+
+            });
+
+
+
+
+
+            function loadGroups() {
+
+
+                $.ajax({
+
+
+                    url: "/api/product-groups",
+
+                    type: "GET",
+
+
+                    success: function(groups) {
+
+
+
+                        let cards = "";
+
+
+
+                        $.each(groups, function(index, group) {
+
+
+
+                            cards += `
+
+
+                        <div class="group-card">
+
+
+
+                            <div class="group-top">
+
+
+                              
+
+
+
+                                <span class="${group.isActive ? "active" : "inactive"} status">
+
+                                    ${group.isActive ? "Active" : "Inactive"}
+
+                                </span>
+
+
+                            </div>
+
+
+
+
+
+                            <h2>
+
+                                ${group.name}
+
+                            </h2>
+
+
+
+                            <p>
+
+                                ${group.description}
+
+                            </p>
+
+
+
+
+
+                            <div class="card-footer">
+
+
+                                <a href="/ProductGroup/Edit/${group.productGroupId}"
+                                   class="edit-btn">
+
+                                    Edit
+
+                                </a>
+
+
+
+                            </div>
+
+
+
+                        </div>
+
+
+
+                        `;
+
+
+
+                        });
+
+
+
+                        $("#productGroupContainer")
+                            .html(cards);
+
+
+
+                    },
+
+
+                    error: function() {
+
+                        alert("Unable to load product groups");
+
+                    }
+
+
+
+                });
+
+
+
+            }
+
+
+
+    </script>
+
+
+</body>
+
+
+</html>

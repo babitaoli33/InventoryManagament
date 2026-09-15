@@ -1,0 +1,261 @@
+﻿
+/* =========================
+PAGE
+========================= */
+
+.page {
+    padding: 30px;
+    width: 100%;
+    box-sizing: border-box;
+    animation: fadeUp .6s ease;
+}
+
+/* =========================
+HEADER
+========================= */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+    .header h1 {
+        margin: 0;
+        font-size: 36px;
+        color: #0f172a;
+        letter-spacing: -1px;
+    }
+
+    .header p {
+        margin-top: 8px;
+        color: #64748b;
+        font-size: 15px;
+    }
+
+/* =========================
+HEADER ACTIONS
+========================= */
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* =========================
+CREATE BUTTON
+========================= */
+
+.create-btn {
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    border-radius: 16px;
+    background: linear-gradient( 135deg, #2563eb, #6366f1, #38bdf8 );
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 14px;
+    box-shadow: 0 15px 35px rgba(37,99,235,.25);
+    transition: .35s;
+}
+
+    .create-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 20px 40px rgba(37,99,235,.32);
+    }
+
+/* =========================
+PURCHASE CARD
+========================= */
+
+.purchase-card {
+    background: rgba(255,255,255,.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 22px;
+    padding: 20px;
+    box-shadow: 0 12px 30px rgba(15,23,42,.08);
+    animation: rowAppear .5s ease;
+}
+
+/* =========================
+TABLE WRAPPER
+========================= */
+
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 16px;
+}
+
+/* =========================
+TABLE
+========================= */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 850px;
+}
+
+/* =========================
+TABLE HEADER
+========================= */
+
+thead {
+    background: rgba(241,245,249,.8);
+}
+
+th {
+    padding: 16px 15px;
+    text-align: left;
+    color: #475569;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
+
+/* =========================
+TABLE BODY
+========================= */
+
+td {
+    padding: 16px 15px;
+    border-top: 1px solid rgba(226,232,240,.7);
+    color: #334155;
+    font-size: 14px;
+}
+
+tbody tr {
+    transition: .3s;
+}
+
+    tbody tr:hover {
+        background: rgba(248,250,252,.8);
+    }
+
+/* =========================
+PURCHASE ID
+========================= */
+
+td:first-child {
+    color: #2563eb;
+    font-weight: 700;
+}
+
+/* =========================
+AMOUNT
+========================= */
+
+.amount {
+    color: #0f172a;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* =========================
+VIEW BUTTON
+========================= */
+
+.view-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    border-radius: 13px;
+    background: rgba(14,165,233,.12);
+    color: #0284c7;
+    border: 1px solid rgba(14,165,233,.2);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+    transition: .35s;
+}
+
+    .view-btn:hover {
+        transform: translateY(-3px);
+        background: rgba(14,165,233,.2);
+        box-shadow: 0 8px 18px rgba(14,165,233,.12);
+    }
+
+/* =========================
+EMPTY MESSAGE
+========================= */
+
+.empty-message {
+    text-align: center;
+    padding: 50px 20px;
+    color: #64748b;
+    font-size: 14px;
+}
+
+/* =========================
+ERROR MESSAGE
+========================= */
+
+.error-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: #dc2626;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* =========================
+ANIMATIONS
+========================= */
+
+@keyframes fadeUp {
+
+    ``` from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    ```
+}
+
+@keyframes rowAppear {
+
+    ``` from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    ```
+}
+
+/* =========================
+SCROLLBAR
+========================= */
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 20px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}

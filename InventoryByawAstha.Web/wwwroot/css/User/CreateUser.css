@@ -1,0 +1,187 @@
+﻿
+
+
+body {
+    background: radial-gradient(circle at top left,#dbeafe,#f8fafc 40%,#e0e7ff);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+}
+
+
+
+/* MAIN CONTAINER */
+
+
+.page {
+    padding: 40px;
+    min-height: 100vh;
+}
+
+
+
+/* HEADER */
+
+
+.header {
+    margin-bottom: 35px;
+}
+
+
+    .header h1 {
+        font-size: 42px;
+        letter-spacing: -1.5px;
+        color: #111827;
+        margin: 0;
+        font-weight: 700;
+    }
+
+
+
+    .header p {
+        color: #6b7280;
+        margin-top: 8px;
+    }
+
+
+
+/* GLASS FORM CARD */
+
+
+.glass-card {
+    max-width: 650px;
+    margin: 0 auto; /* centers the card */
+
+    background: rgba(255,255,255,.55);
+    backdrop-filter: blur(25px);
+    border-radius: 32px;
+    padding: 35px;
+    border: 1px solid rgba(255,255,255,.7);
+    box-shadow: 0 30px 70px rgba(0,0,0,.12);
+}
+
+/* FORM GROUP */
+
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 22px;
+}
+
+
+
+    .form-group label {
+        font-size: 14px;
+        color: #6b7280;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+
+
+
+/* INPUTS */
+
+
+.input {
+    padding: 15px 18px;
+    border-radius: 16px;
+    border: 1px solid rgba(0,0,0,.08);
+    outline: none;
+    background: rgba(255,255,255,.7);
+    font-size: 15px;
+    transition: .25s ease;
+}
+
+
+
+    .input:focus {
+        background: white;
+        border-color: #6366f1;
+        box-shadow: 0 0 0 4px rgba(99,102,241,.15);
+    }
+
+
+
+/* BUTTON AREA */
+
+
+.form-actions {
+    display: flex;
+    gap: 14px;
+    margin-top: 30px;
+}
+
+
+
+/* SAVE BUTTON */
+
+
+.create-btn {
+    background: linear-gradient(135deg,#111827,#374151);
+    color: white;
+    padding: 14px 25px;
+    border-radius: 18px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 15px;
+    box-shadow: 0 12px 30px rgba(0,0,0,.18);
+    transition: .25s ease;
+}
+
+
+
+    .create-btn:hover {
+        transform: translateY(-3px);
+    }
+
+
+
+/* CANCEL BUTTON */
+
+
+.cancel-btn {
+    padding: 14px 25px;
+    border-radius: 18px;
+    text-decoration: none;
+    background: rgba(0,0,0,.05);
+    color: #374151;
+    font-weight: 600;
+    transition: .25s ease;
+}
+
+
+
+    .cancel-btn:hover {
+        background: rgba(0,0,0,.1);
+    }
+
+
+
+/* VALIDATION */
+
+
+.validation {
+    color: #dc2626;
+    font-size: 13px;
+    margin-top: 6px;
+}
+
+
+
+/* ANIMATION */
+
+
+@keyframes formAppear {
+
+
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

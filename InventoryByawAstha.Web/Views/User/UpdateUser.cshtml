@@ -1,0 +1,146 @@
+﻿@model InventoryByawAstha.BLL.src.DTOs.UserDTOs.UpdateUserDTO
+
+@{
+    Layout = null;
+}
+
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>Edit User</title>
+
+    <link rel="stylesheet" href="~/css/User/UpdateUser.css" />
+
+</head>
+
+
+
+<body>
+
+
+    <div class="center-page">
+
+
+        <div class="glass-card">
+
+
+            <h1>
+                Update User
+            </h1>
+
+
+            <form asp-action="UpdateUser" method="post">
+
+
+                <input asp-for="UserId" type="hidden" />
+
+
+
+                <div class="form-group">
+
+                    <label>Name</label>
+
+                    <input asp-for="Name"
+                           class="input" />
+
+                    <span asp-validation-for="Name"
+                          class="validation"></span>
+
+                </div>
+
+
+
+                <div class="form-group">
+
+                    <label>Email</label>
+
+                    <input asp-for="Email"
+                           class="input" />
+
+                    <span asp-validation-for="Email"
+                          class="validation"></span>
+
+                </div>
+
+
+
+                <div class="form-group">
+
+                    <label>Mobile</label>
+
+                    <input asp-for="PhNumber"
+                           class="input" />
+
+                    <span asp-validation-for="PhNumber"
+                          class="validation"></span>
+
+                </div>
+                <div class="form-group">
+
+                    <label>Role</label>
+
+
+                    <select asp-for="Role"
+                            class="input">
+
+
+                        <option value="User">
+                            User
+                        </option>
+                        <option value="Staff">
+                            Staff
+                        </option>
+
+
+                        <option value="Admin">
+                            Admin
+                        </option>
+
+
+                    </select>
+
+
+                </div>
+
+
+               
+
+                <div class="form-actions">
+
+
+                    <button class="create-btn">
+
+                        Update
+
+                    </button>
+
+
+                    <a asp-action="Index"
+                       class="cancel-btn">
+
+                        Cancel
+
+                    </a>
+
+
+                </div>
+
+
+
+            </form>
+
+
+
+        </div>
+
+
+    </div>
+
+
+</body>
+
+</html>

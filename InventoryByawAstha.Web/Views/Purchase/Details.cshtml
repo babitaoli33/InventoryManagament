@@ -1,0 +1,397 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+@{
+    var purchaseId = TempData.Peek("PurchaseId");
+    var vendor = TempData.Peek("Vendor");
+    var createdBy = TempData.Peek("CreatedBy");
+    var purchaseDate = TempData.Peek("PurchaseDate");
+    var totalAmount = TempData.Peek("TotalAmount");
+}
+
+<title>Purchase Details</title>
+
+<link rel="stylesheet" href="~/css/Purchase/Details.css" />
+
+<div class="page">
+
+  
+    <!-- =========================
+     HEADER
+========================= -->
+
+    <div class="header">
+
+        <div>
+
+            <h1>
+                Purchase Details
+            </h1>
+
+            <p>
+                View the complete details of this purchase
+            </p>
+
+        </div>
+
+        <div class="header-actions">
+
+            <a href="/Purchase/Index"
+               class="back-btn">
+
+                ← Back to Purchases
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+     PURCHASE INFORMATION
+========================= -->
+
+    <div class="purchase-card">
+
+        <div class="purchase-header">
+
+            <div class="info-item">
+
+                <span class="label">
+                    Purchase ID
+                </span>
+
+                <strong id="purchaseId">
+                    @purchaseId
+                </strong>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <span class="label">
+                    Vendor
+                </span>
+
+                <strong id="vendorName">
+                    @vendor
+                </strong>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <span class="label">
+                    Purchase Date
+                </span>
+
+                <strong id="purchaseDate">
+                    @purchaseDate
+                </strong>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <span class="label">
+                    Created By
+                </span>
+
+                <strong id="createdBy">
+                    @createdBy
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+         PRODUCTS
+    ========================= -->
+
+        <div class="section">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2>
+                        Purchased Products
+                    </h2>
+
+                    <p>
+                        Products included in this purchase
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Product
+                            </th>
+
+                            <th>
+                                Quantity
+                            </th>
+
+                            <th>
+                                Purchase Price
+                            </th>
+
+                            <th>
+                                Sales Price
+                            </th>
+
+                            <th>
+                                Amount
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="detailsContainer">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+         TOTAL
+    ========================= -->
+
+        <div class="total-section">
+
+            <span>
+                Total Amount
+            </span>
+
+            <strong id="totalAmount">
+
+                Rs. @(totalAmount ?? 0)
+
+            </strong>
+
+        </div>
+
+    </div>
+   
+
+</div>
+
+<!-- =========================
+     JQUERY
+========================= -->
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script>
+
+    $(document).ready(function() {
+
+        loadPurchaseDetails();
+
+    });
+
+
+    // =========================
+    // LOAD PURCHASE DETAILS
+    // =========================
+
+    function loadPurchaseDetails() {
+
+        // Get purchase ID from URL
+
+        let pathParts =
+            window.location.pathname.split("/");
+
+
+        let purchaseId =
+            pathParts[pathParts.length - 1];
+
+
+        if (!purchaseId) {
+
+            $("#detailsContainer").html(`
+
+                    <tr>
+
+                        <td colspan="5"
+                            class="error-message">
+
+                            Invalid purchase ID.
+
+                        </td>
+
+                    </tr>
+
+                `);
+
+            return;
+        }
+
+
+        // =========================
+        // CALL PURCHASE DETAILS API
+        // =========================
+
+        $.ajax({
+
+            url: "/api/purchase/" + purchaseId,
+
+            type: "GET",
+
+
+            success: function(details) {
+
+                console.log("Purchase details:", details);
+
+
+                if (!details ||
+                    details.length === 0) {
+
+                    $("#detailsContainer").html(`
+
+                            <tr>
+
+                                <td colspan="5"
+                                    class="empty-message">
+
+                                    No purchase details found.
+
+                                </td>
+
+                            </tr>
+
+                        `);
+
+                    return;
+                }
+
+
+                let rows = "";
+
+
+                $.each(
+                    details,
+                    function(index, detail) {
+
+                        rows += `
+
+                                <tr>
+
+                                    <td>
+                                        ${detail.productName}
+                                    </td>
+
+
+                                    <td>
+                                        ${detail.quantity}
+                                    </td>
+
+
+                                    <td>
+
+                                        Rs.
+                                        ${Number(
+                            detail.purchasePrice
+                        ).toFixed(2)}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        Rs.
+                                        ${Number(
+                            detail.salesPrice
+                        ).toFixed(2)}
+
+                                    </td>
+
+
+                                    <td class="amount">
+
+                                        Rs.
+                                        ${Number(
+                            detail.amount
+                        ).toFixed(2)}
+
+                                    </td>
+
+                                </tr>
+
+                            `;
+
+                    }
+                );
+
+
+                $("#detailsContainer")
+                    .html(rows);
+
+            },
+
+
+            // =========================
+            // ERROR
+            // =========================
+
+            error: function(xhr) {
+
+                let message =
+                    "Unable to load purchase details.";
+
+
+                if (xhr.responseJSON &&
+                    xhr.responseJSON.message) {
+
+                    message =
+                        xhr.responseJSON.message;
+
+                }
+
+
+                $("#detailsContainer").html(`
+
+                        <tr>
+
+                            <td colspan="5"
+                                class="error-message">
+
+                                ${message}
+
+                            </td>
+
+                        </tr>
+
+                    `);
+
+            }
+
+        });
+
+    }
+
+</script>

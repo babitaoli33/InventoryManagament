@@ -1,0 +1,1181 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<title>New Sale</title>
+
+<link rel="stylesheet" href="~/css/Sale/Create.css" />
+
+<div class="page">
+
+    <!-- =========================
+         HEADER
+    ========================= -->
+
+    <div class="header">
+
+        <div>
+
+            <h1>
+                New Sale
+            </h1>
+
+            <p>
+                Create a new sale for a customer
+            </p>
+
+        </div>
+
+        <div class="header-actions">
+
+            <a href="/Sale/Index"
+               class="cancel-btn">
+
+                ← Back to Sales
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         SALE CARD
+    ========================= -->
+
+    <div class="glass-card">
+
+        <!-- =========================
+             CUSTOMER
+        ========================= -->
+
+        <div class="section">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2>
+                        Customer
+                    </h2>
+
+                    <p>
+                        Select the customer for this sale
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="customer">
+                    Customer
+                </label>
+
+                <select id="customer"
+                        class="input">
+
+                    <option value="">
+                        Select Customer
+                    </option>
+
+                </select>
+
+                <span id="customerError"
+                      class="validation">
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             PRODUCTS
+        ========================= -->
+
+        <div class="section">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2>
+                        Products
+                    </h2>
+
+                    <p>
+                        Add products to this sale
+                    </p>
+
+                </div>
+
+                <button type="button"
+                        id="addProductBtn"
+                        class="add-product-btn">
+
+                    + Add Product
+
+                </button>
+
+            </div>
+
+
+            <!-- PRODUCT TABLE -->
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Product
+                            </th>
+
+                            <th>
+                                Available Stock
+                            </th>
+
+                            <th>
+                                Quantity
+                            </th>
+
+                            <th>
+                                Sales Price
+                            </th>
+
+                            <th>
+                                Amount
+                            </th>
+
+                            <th>
+                                Action
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="productContainer">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <span id="productError"
+                  class="validation">
+            </span>
+
+        </div>
+
+
+        <!-- =========================
+             TOTAL
+        ========================= -->
+
+        <div class="total-section">
+
+            <span>
+                Total Amount
+            </span>
+
+            <strong id="totalAmount">
+
+                Rs. 0.00
+
+            </strong>
+
+        </div>
+
+
+        <!-- =========================
+             FORM ACTIONS
+        ========================= -->
+
+        <div class="form-actions">
+
+            <a href="/Sale/Index"
+               class="cancel-btn">
+
+                Cancel
+
+            </a>
+
+            <button type="button"
+                    id="createSaleBtn"
+                    class="create-btn">
+
+                Create Sale
+
+            </button>
+
+        </div>
+
+        <div id="message"
+             class="message">
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     JQUERY
+========================= -->
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+
+<script>
+
+    // ==========================================
+    // GLOBAL PRODUCT LIST
+    // ==========================================
+
+    let products = [];
+
+
+    // ==========================================
+    // PAGE LOAD
+    // ==========================================
+
+    $(document).ready(function() {
+
+        loadCustomers();
+
+        loadProducts();
+
+        addProductRow();
+
+    });
+
+
+    // ==========================================
+    // LOAD CUSTOMERS
+    // ==========================================
+
+    function loadCustomers() {
+
+        $.ajax({
+
+            url: "/api/customer",
+
+            type: "GET",
+
+            success: function(customers) {
+
+                const customerSelect = $("#customer");
+
+                customerSelect
+                    .empty()
+                    .append(`
+                            <option value="">
+                                Select Customer
+                            </option>
+                        `);
+
+
+                $.each(
+                    customers,
+                    function(index, customer) {
+
+                        // Only active customers
+                        // can be selected.
+
+                        if (customer.isActive === true) {
+
+                            customerSelect.append(`
+
+                                    <option value="${customer.customerId}">
+
+                                        ${customer.name}
+
+                                        -
+                                        ${customer.phone}
+
+                                    </option>
+
+                                `);
+
+                        }
+
+                    }
+                );
+
+            },
+
+            error: function() {
+
+                $("#customerError")
+                    .text(
+                        "Unable to load customers."
+                    );
+
+            }
+
+        });
+
+    }
+
+
+    // ==========================================
+    // LOAD PRODUCTS
+    // ==========================================
+
+    function loadProducts() {
+
+        $.ajax({
+
+            url: "/api/product",
+
+            type: "GET",
+
+            success: function(data) {
+
+                // Store the complete product list.
+
+                products = data;
+
+                console.log("Products loaded:", products);
+
+                refreshProductDropdowns();
+
+            },
+
+            error: function() {
+
+                $("#productError")
+                    .text(
+                        "Unable to load products."
+                    );
+
+            }
+
+        });
+
+    }
+
+
+    // ==========================================
+    // ADD PRODUCT ROW
+    // ==========================================
+
+    function addProductRow() {
+
+        const row = `
+
+                <tr class="product-row">
+
+                    <!-- PRODUCT -->
+
+                    <td>
+
+                        <select class="input product-select">
+
+                            <option value="">
+
+                                Select Product
+
+                            </option>
+
+                        </select>
+
+                    </td>
+
+
+                    <!-- AVAILABLE STOCK -->
+
+                    <td>
+
+                        <span class="stock-display">
+
+                            -
+
+                        </span>
+
+                    </td>
+
+
+                    <!-- QUANTITY -->
+
+                    <td>
+
+                        <input type="number"
+                               class="input quantity-input"
+                               min="1"
+                               value="1">
+
+                    </td>
+
+
+                    <!-- SALES PRICE -->
+
+                    <td>
+
+                        <input type="number"
+                               class="input price-input"
+                               min="0"
+                               step="0.01"
+                               placeholder="0.00">
+
+                    </td>
+
+
+                    <!-- AMOUNT -->
+
+                    <td>
+
+                        <strong class="amount-display">
+
+                            Rs. 0.00
+
+                        </strong>
+
+                    </td>
+
+
+                    <!-- REMOVE -->
+
+                    <td>
+
+                        <button type="button"
+                                class="remove-btn">
+
+                            ×
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+
+        $("#productContainer")
+            .append(row);
+
+
+        refreshProductDropdowns();
+
+    }
+
+
+    // ==========================================
+    // REFRESH PRODUCT DROPDOWNS
+    // ==========================================
+
+    function refreshProductDropdowns() {
+
+        $(".product-select").each(
+            function() {
+
+                const select = $(this);
+
+                const currentValue =
+                    select.val();
+
+
+                select
+                    .empty()
+                    .append(`
+
+                            <option value="">
+
+                                Select Product
+
+                            </option>
+
+                        `);
+
+
+                $.each(
+                    products,
+                    function(index, product) {
+
+                        select.append(`
+
+                                <option value="${product.productId}">
+
+                                    ${product.name}
+
+                                </option>
+
+                            `);
+
+                    }
+                );
+
+
+                if (currentValue) {
+
+                    select.val(currentValue);
+
+                }
+
+            }
+        );
+
+    }
+
+
+    // ==========================================
+    // PRODUCT SELECTED
+    // ==========================================
+
+    $(document).on(
+        "change",
+        ".product-select",
+        function() {
+
+            const row =
+                $(this).closest(".product-row");
+
+
+            const productId =
+                Number($(this).val());
+
+
+            const product =
+                products.find(
+                    p =>
+                        Number(p.productId) ===
+                        productId
+                );
+
+
+            // No product selected
+
+            if (!product) {
+
+                row.find(".stock-display")
+                    .text("-");
+
+                row.find(".price-input")
+                    .val("");
+
+                row.find(".quantity-input")
+                    .val(1)
+                    .removeAttr("max");
+
+                row.find(".amount-display")
+                    .text("Rs. 0.00");
+
+                calculateTotal();
+
+                return;
+
+            }
+
+
+            // ==========================================
+            // AVAILABLE STOCK
+            // ==========================================
+
+            const stock =
+                Number(product.quantity);
+
+
+            console.log(
+                "Selected product:",
+                product.name,
+                "Available stock:",
+                stock
+            );
+
+
+            row.find(".stock-display")
+                .text(stock);
+
+
+            // ==========================================
+            // SET MAXIMUM QUANTITY
+            // ==========================================
+
+            row.find(".quantity-input")
+                .attr("max", stock);
+
+
+            // ==========================================
+            // RESET QUANTITY
+            // ==========================================
+
+            row.find(".quantity-input")
+                .val(1);
+
+
+            // ==========================================
+            // SALES PRICE
+            // ==========================================
+
+            const salesPrice =
+                Number(product.salesPrice);
+
+
+            if (!isNaN(salesPrice)) {
+
+                row.find(".price-input")
+                    .val(salesPrice);
+
+            }
+
+
+            // ==========================================
+            // CALCULATE AMOUNT
+            // ==========================================
+
+            calculateRowAmount(row);
+
+        }
+    );
+
+
+    // ==========================================
+    // QUANTITY / PRICE CHANGE
+    // ==========================================
+
+    $(document).on(
+        "input",
+        ".quantity-input, .price-input",
+        function() {
+
+            const row =
+                $(this).closest(".product-row");
+
+
+            // ==========================================
+            // QUANTITY VALIDATION
+            // ==========================================
+
+            if (
+                $(this).hasClass("quantity-input")
+            ) {
+
+                const productId =
+                    Number(
+                        row.find(".product-select").val()
+                    );
+
+
+                const quantity =
+                    Number(
+                        row.find(".quantity-input").val()
+                    );
+
+
+                const product =
+                    products.find(
+                        p =>
+                            Number(p.productId) ===
+                            productId
+                    );
+
+
+                if (product) {
+
+                    const stock =
+                        Number(product.quantity);
+
+
+                    if (quantity > stock) {
+
+                        $("#productError")
+                            .text(
+                                `Only ${stock} units of ${product.name} are available.`
+                            );
+
+                    }
+                    else {
+
+                        $("#productError")
+                            .text("");
+
+                    }
+
+                }
+
+            }
+
+
+            calculateRowAmount(row);
+
+        }
+    );
+
+
+    // ==========================================
+    // CALCULATE ROW AMOUNT
+    // ==========================================
+
+    function calculateRowAmount(row) {
+
+        const quantity =
+            Number(
+                row.find(".quantity-input").val()
+            );
+
+
+        const price =
+            Number(
+                row.find(".price-input").val()
+            );
+
+
+        const amount =
+            quantity * price;
+
+
+        row.find(".amount-display")
+            .text(
+                "Rs. " +
+                amount.toFixed(2)
+            );
+
+
+        calculateTotal();
+
+    }
+
+
+    // ==========================================
+    // CALCULATE TOTAL
+    // ==========================================
+
+    function calculateTotal() {
+
+        let total = 0;
+
+
+        $(".product-row").each(
+            function() {
+
+                const quantity =
+                    Number(
+                        $(this)
+                            .find(".quantity-input")
+                            .val()
+                    );
+
+
+                const price =
+                    Number(
+                        $(this)
+                            .find(".price-input")
+                            .val()
+                    );
+
+
+                total +=
+                    quantity * price;
+
+            }
+        );
+
+
+        $("#totalAmount")
+            .text(
+                "Rs. " +
+                total.toFixed(2)
+            );
+
+    }
+
+
+    // ==========================================
+    // ADD PRODUCT
+    // ==========================================
+
+    $("#addProductBtn").click(
+        function() {
+
+            addProductRow();
+
+        }
+    );
+
+
+    // ==========================================
+    // REMOVE PRODUCT
+    // ==========================================
+
+    $(document).on(
+        "click",
+        ".remove-btn",
+        function() {
+
+            const rows =
+                $(".product-row");
+
+
+            // Don't allow removing
+            // the final row.
+
+            if (rows.length <= 1) {
+
+                $("#productError")
+                    .text(
+                        "At least one product is required."
+                    );
+
+                return;
+
+            }
+
+
+            $(this)
+                .closest(".product-row")
+                .remove();
+
+
+            calculateTotal();
+
+        }
+    );
+
+
+    // ==========================================
+    // CREATE SALE
+    // ==========================================
+
+    $("#createSaleBtn").click(
+        function() {
+
+            $("#customerError")
+                .text("");
+
+
+            $("#productError")
+                .text("");
+
+
+            $("#message")
+                .removeClass(
+                    "success-message error-message"
+                )
+                .text("");
+
+
+            // ==========================================
+            // CUSTOMER
+            // ==========================================
+
+            const customerId =
+                Number(
+                    $("#customer").val()
+                );
+
+
+            if (!customerId) {
+
+                $("#customerError")
+                    .text(
+                        "Please select a customer."
+                    );
+
+                return;
+
+            }
+
+
+            // ==========================================
+            // PRODUCTS
+            // ==========================================
+
+            const items = [];
+
+            let valid = true;
+
+
+            $(".product-row").each(
+                function() {
+
+                    const row =
+                        $(this);
+
+
+                    const productId =
+                        Number(
+                            row.find(
+                                ".product-select"
+                            ).val()
+                        );
+
+
+                    const quantity =
+                        Number(
+                            row.find(
+                                ".quantity-input"
+                            ).val()
+                        );
+
+
+                    const salesPrice =
+                        Number(
+                            row.find(
+                                ".price-input"
+                            ).val()
+                        );
+
+
+                    // Product not selected
+
+                    if (!productId) {
+
+                        valid = false;
+
+                        return false;
+
+                    }
+
+
+                    // Invalid quantity
+
+                    if (
+                        !quantity ||
+                        quantity <= 0
+                    ) {
+
+                        $("#productError")
+                            .text(
+                                "Quantity must be greater than zero."
+                            );
+
+                        valid = false;
+
+                        return false;
+
+                    }
+
+
+                    // Invalid sales price
+
+                    if (
+                        salesPrice < 0 ||
+                        isNaN(salesPrice)
+                    ) {
+
+                        $("#productError")
+                            .text(
+                                "Sales price cannot be negative."
+                            );
+
+                        valid = false;
+
+                        return false;
+
+                    }
+
+
+                    // ==========================================
+                    // FIND PRODUCT
+                    // ==========================================
+
+                    const product =
+                        products.find(
+                            p =>
+                                Number(p.productId) ===
+                                productId
+                        );
+
+
+                    if (!product) {
+
+                        $("#productError")
+                            .text(
+                                "Selected product could not be found."
+                            );
+
+                        valid = false;
+
+                        return false;
+
+                    }
+
+
+                    // ==========================================
+                    // CHECK AVAILABLE STOCK
+                    // ==========================================
+
+                    const availableStock =
+                        Number(product.quantity);
+
+
+                    if (
+                        quantity >
+                        availableStock
+                    ) {
+
+                        $("#productError")
+                            .text(
+                                `Insufficient stock for ${product.name}. Available stock: ${availableStock}.`
+                            );
+
+                        valid = false;
+
+                        return false;
+
+                    }
+
+
+                    // ==========================================
+                    // ADD ITEM
+                    // ==========================================
+
+                    items.push({
+
+                        productId:
+                            productId,
+
+                        quantity:
+                            quantity,
+
+                        salesPrice:
+                            salesPrice
+
+                    });
+
+                }
+            );
+
+
+            if (!valid) {
+
+                if (
+                    !$("#productError").text()
+                ) {
+
+                    $("#productError")
+                        .text(
+                            "Please complete all product fields correctly."
+                        );
+
+                }
+
+                return;
+
+            }
+
+
+            if (items.length === 0) {
+
+                $("#productError")
+                    .text(
+                        "Please add at least one product."
+                    );
+
+                return;
+
+            }
+
+
+            // ==========================================
+            // REQUEST
+            // ==========================================
+
+            const request = {
+
+                customerId:
+                    customerId,
+
+                items:
+                    items
+
+            };
+
+
+            console.log(
+                "Sale request:",
+                request
+            );
+
+
+            // ==========================================
+            // SEND TO API
+            // ==========================================
+
+            $("#createSaleBtn")
+                .prop("disabled", true)
+                .text("Creating Sale...");
+
+
+            $.ajax({
+
+                url: "/api/sale",
+
+                type: "POST",
+
+                contentType:
+                    "application/json",
+
+                data:
+                    JSON.stringify(request),
+
+
+                success: function(response) {
+
+                    $("#message")
+                        .addClass(
+                            "success-message"
+                        )
+                        .text(
+                            response.message ||
+                            "Sale created successfully."
+                        );
+
+
+                    setTimeout(
+                        function() {
+
+                            window.location.href =
+                                "/Sale/Index";
+
+                        },
+                        1000
+                    );
+
+                },
+
+
+                error: function(xhr) {
+
+                    let message =
+                        "Unable to create sale.";
+
+
+                    if (
+                        xhr.responseJSON &&
+                        xhr.responseJSON.message
+                    ) {
+
+                        message =
+                            xhr.responseJSON.message;
+
+                    }
+
+
+                    $("#message")
+                        .addClass(
+                            "error-message"
+                        )
+                        .text(message);
+
+
+                    $("#createSaleBtn")
+                        .prop("disabled", false)
+                        .text("Create Sale");
+
+                }
+
+            });
+
+        }
+    );
+
+</script>

@@ -1,0 +1,242 @@
+﻿@{
+    Layout = null;
+}
+
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>Create Unit Of Measure</title>
+
+    <link rel="stylesheet" href="~/css/UnitOfMeasure/Create.css" />
+
+</head>
+
+
+<body>
+
+
+    <div class="page">
+
+
+        <div class="form-card">
+
+
+            <div class="form-header">
+
+
+                <h1>
+                    Create Unit Of Measure
+                </h1>
+
+
+                <p>
+                    Add a new measurement unit for your inventory
+                </p>
+
+
+            </div>
+
+
+
+
+
+            <div class="form-group">
+
+
+                <label>
+                    Name
+                </label>
+
+
+                <input id="name"
+                       placeholder="Enter unit name" />
+
+
+            </div>
+
+
+
+
+
+
+
+            <div class="form-group">
+
+
+                <label>
+                    Code
+                </label>
+
+
+                <input id="code"
+                       placeholder="Enter unit code" />
+
+
+            </div>
+
+
+
+
+
+
+
+            <div class="form-group">
+
+
+                <label>
+                    Description
+                </label>
+
+
+                <textarea id="description"
+                          placeholder="Enter description"></textarea>
+
+
+            </div>
+
+
+
+
+
+
+
+            <div class="status-row">
+
+
+                <label>
+                    Active
+                </label>
+
+
+                <input type="checkbox"
+                       id="isActive"
+                       checked />
+
+
+            </div>
+
+
+
+
+
+
+
+            <button onclick="createUom()">
+
+
+                Create Unit
+
+
+            </button>
+
+
+
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+
+
+    <script>
+
+
+            function createUom() {
+
+
+
+                let data = {
+
+
+                    name: $("#name").val(),
+
+
+                    code: $("#code").val(),
+
+
+                    description: $("#description").val(),
+
+
+                    isActive: $("#isActive").is(":checked")
+
+
+                };
+
+
+
+
+
+
+                $.ajax({
+
+
+                    url: "/api/unitofmeasure",
+
+
+                    type: "POST",
+
+
+                    contentType: "application/json",
+
+
+                    data: JSON.stringify(data),
+
+
+
+
+
+                    success: function(response) {
+
+
+
+                        alert(response.message);
+
+
+
+                        window.location.href = "/UnitOfMeasure/Index";
+
+
+
+                    },
+
+                    error: function(xhr) {
+
+                        console.log("STATUS:", xhr.status);
+
+                        console.log("RESPONSE:", xhr.responseText);
+
+                        alert(xhr.responseText);
+
+                    }
+                    
+
+
+                });
+
+
+
+            }
+
+
+
+    </script>
+
+
+
+</body>
+
+
+</html>

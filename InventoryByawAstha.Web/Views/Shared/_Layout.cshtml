@@ -1,0 +1,872 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - Inventory</title>
+
+    <link rel="stylesheet"
+          href="~/css/layout.css" />
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+    @RenderSection("Styles", required: false)
+
+</head>
+
+<body>
+
+    <div class="app">
+
+        <aside class="sidebar">
+
+            <div class="logo">
+
+                <img src="~/img/Logo.png"
+                     alt="Inventory Logo" />
+
+            </div>
+
+
+            <nav class="navigation">
+
+                <a asp-controller="Dashboard"
+                   asp-action="Index">
+
+                    <i class="fa-solid fa-house"></i>
+
+                    <span>
+                        Dashboard
+                    </span>
+
+                </a>
+
+
+                <p class="menu-title">
+                    MANAGEMENT
+                </p>
+
+
+                <!-- USERS -->
+
+                <a asp-controller="User"
+                   asp-action="Index">
+
+                    <i class="fa-solid fa-users"></i>
+
+                    <span>
+                        Users
+                    </span>
+
+                </a>
+
+
+                <!-- PRODUCT GROUPS -->
+
+                <a asp-controller="ProductGroup"
+                   asp-action="Index">
+
+                    <i class="fa-solid fa-layer-group"></i>
+
+                    <span>
+                        Product Groups
+                    </span>
+
+                </a>
+
+
+                <!-- PRODUCTS -->
+
+                <a asp-controller="Product"
+                   asp-action="Index">
+
+                    <i class="fa-solid fa-box"></i>
+
+                    <span>
+                        Products
+                    </span>
+
+                </a>
+
+
+                <!-- UNITS -->
+
+                <a asp-controller="UnitOfMeasure"
+                   asp-action="Index">
+
+                    <i class="fa-solid fa-ruler"></i>
+
+                    <span>
+                        Units
+                    </span>
+
+                </a>
+
+
+                <!-- VENDORS -->
+
+                <a asp-controller="Vendor"
+                   asp-action="Index">
+
+                    <i class="fa-solid fa-truck"></i>
+
+                    <span>
+                        Vendors
+                    </span>
+
+                </a>
+
+
+                <!-- CUSTOMERS -->
+
+                <a asp-controller="Customer"
+                   asp-action="Index">
+
+                    <i class="fa-solid fa-user-group"></i>
+
+                    <span>
+                        Customers
+                    </span>
+
+                </a>
+
+
+                <p class="menu-title">
+                    TRANSACTIONS
+                </p>
+
+
+                <!-- PURCHASE -->
+
+                <a asp-controller="Purchase"
+                   asp-action="Index">
+
+                    <i class="fa-solid fa-cart-shopping"></i>
+
+                    <span>
+                        Purchase
+                    </span>
+
+                </a>
+
+
+                <!-- SALES -->
+
+                <a asp-controller="Sale"
+                   asp-action="Index">
+
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
+
+                    <span>
+                        Sales
+                    </span>
+
+                </a>
+
+
+                <p class="menu-title">
+                    REPORTS
+                </p>
+
+
+                <!-- CURRENT STOCK -->
+
+                <a asp-controller="Product"
+                   asp-action="CurrentStocks">
+
+                    <i class="fa-solid fa-chart-simple"></i>
+
+                    <span>
+                        Current Stock
+                    </span>
+
+                </a>
+
+            </nav>
+
+
+            <div class="logout">
+
+                <a href="javascript:void(0)"
+                   onclick="confirmLogout()">
+
+                    <i class="fa-solid fa-right-from-bracket"></i>
+
+                    <span>
+                        Logout
+                    </span>
+
+                </a>
+
+            </div>
+
+        </aside>
+
+
+        <main class="content">
+
+            @RenderBody()
+
+        </main>
+
+    </div>
+
+
+    @RenderSection("Scripts", required: false)
+
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <script>
+
+            /*
+            ============================================================
+            JWT + REFRESH TOKEN MANAGEMENT
+            ============================================================
+            */
+
+
+            let isRefreshing = false;
+
+            let refreshPromise = null;
+
+            let sessionExpiredHandled = false;
+
+
+            /*
+            ============================================================
+            ATTACH ACCESS TOKEN TO API REQUESTS
+            ============================================================
+            */
+
+            $.ajaxSetup({
+
+                beforeSend: function(xhr, settings) {
+
+                    if (
+                        !settings.url ||
+                        !settings.url.startsWith("/api/")
+                    ) {
+                        return;
+                    }
+
+
+                    /*
+                    Do NOT attach/refresh authentication for
+                    authentication endpoints.
+                    */
+
+                    if (
+                        settings.url.startsWith("/api/auth/")
+                    ) {
+                        return;
+                    }
+
+
+                    const accessToken =
+                        localStorage.getItem("accessToken");
+
+
+                    if (!accessToken) {
+                        return;
+                    }
+
+
+                    xhr.setRequestHeader(
+                        "Authorization",
+                        "Bearer " + accessToken
+                    );
+
+                }
+
+            });
+
+
+            /*
+            ============================================================
+            REFRESH ACCESS TOKEN
+            ============================================================
+            */
+
+            function refreshAccessToken() {
+
+                /*
+                If another request is already refreshing the token,
+                return the same Promise.
+
+                This prevents multiple simultaneous refresh requests.
+                */
+
+                if (isRefreshing) {
+
+                    return refreshPromise;
+
+                }
+
+
+                isRefreshing = true;
+
+
+                const refreshToken =
+                    localStorage.getItem("refreshToken");
+
+
+                /*
+                No refresh token means the user must log in again.
+                */
+
+                if (!refreshToken) {
+
+                    isRefreshing = false;
+
+                    return Promise.reject(
+                        "No refresh token available"
+                    );
+
+                }
+
+
+                refreshPromise = $.ajax({
+
+                    url: "/api/auth/refresh",
+
+                    type: "POST",
+
+                    contentType: "application/json",
+
+                    data: JSON.stringify({
+
+                        refreshToken: refreshToken
+
+                    })
+
+                })
+
+                    .then(function(response) {
+
+                        /*
+                        ====================================================
+                        SAVE NEW TOKENS
+                        ====================================================
+                        */
+
+                        localStorage.setItem(
+                            "accessToken",
+                            response.accessToken
+                        );
+
+
+                        localStorage.setItem(
+                            "refreshToken",
+                            response.refreshToken
+                        );
+
+
+                        return response;
+
+                    })
+
+                    .always(function() {
+
+                        isRefreshing = false;
+
+                        refreshPromise = null;
+
+                    });
+
+
+                return refreshPromise;
+
+            }
+
+
+            /*
+            ============================================================
+            HANDLE 401 RESPONSES
+            ============================================================
+            */
+
+            $(document).ajaxError(function(event, xhr, settings) {
+
+
+                /*
+                Ignore requests that are not API requests.
+                */
+
+                if (
+                    !settings.url ||
+                    !settings.url.startsWith("/api/")
+                ) {
+
+                    return;
+
+                }
+
+
+                /*
+                Never try to refresh the login or refresh endpoints.
+                */
+
+                if (
+                    settings.url.startsWith("/api/auth/")
+                ) {
+
+                    return;
+
+                }
+
+
+                /*
+                Only handle 401 Unauthorized.
+                */
+
+                if (xhr.status !== 401) {
+
+                    return;
+
+                }
+
+
+                /*
+                ========================================================
+                IMPORTANT
+                ========================================================
+
+                At this point the original request has already failed.
+
+                We refresh the access token and then retry the request.
+                */
+
+                refreshAccessToken()
+
+                    .then(function() {
+
+                        /*
+                        New access token has been saved.
+
+                        Retry the original request.
+                        */
+
+                        $.ajax({
+
+                            url: settings.url,
+
+                            type: settings.type || "GET",
+
+                            data: settings.data,
+
+                            contentType:
+                                settings.contentType,
+
+                            dataType:
+                                settings.dataType
+
+                        });
+
+                    })
+
+                    .catch(function() {
+
+                        /*
+                        =================================================
+                        REFRESH TOKEN ALSO FAILED
+                        =================================================
+
+                        Now the entire authentication session
+                        is considered invalid.
+                        */
+
+                        if (sessionExpiredHandled) {
+
+                            return;
+
+                        }
+
+
+                        sessionExpiredHandled = true;
+
+
+                        localStorage.removeItem(
+                            "accessToken"
+                        );
+
+
+                        localStorage.removeItem(
+                            "refreshToken"
+                        );
+
+
+                        Swal.fire({
+
+                            icon: "warning",
+
+                            title: "Session Expired",
+
+                            html: `
+                                        <div class="logout-text">
+                                            Your session has expired.
+                                            <br />
+                                            Redirecting you to the login page...
+                                        </div>
+                                    `,
+
+                            showConfirmButton: false,
+
+                            allowOutsideClick: false,
+
+                            allowEscapeKey: false,
+
+                            timer: 2500,
+
+                            timerProgressBar: true,
+
+                            customClass: {
+
+                                popup: "ios-popup",
+
+                                title: "ios-title"
+
+                            }
+
+                        }).then(function() {
+
+                            window.location.href =
+                                "/Account/Login";
+
+                        });
+
+                    });
+
+            });
+
+
+            /*
+            ============================================================
+            LOGOUT
+            ============================================================
+            */
+
+            function confirmLogout() {
+
+                Swal.fire({
+
+                    title: "Logout?",
+
+                    html: `
+                                <div class="logout-text">
+                                    Are you sure you want to leave your inventory dashboard?
+                                </div>
+                            `,
+
+                    icon: "warning",
+
+                    showCancelButton: true,
+
+                    confirmButtonText: `
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                                Logout
+                            `,
+
+                    cancelButtonText: "Stay Here",
+
+                    reverseButtons: true,
+
+                    customClass: {
+
+                        popup: "ios-popup",
+
+                        title: "ios-title",
+
+                        confirmButton: "ios-confirm",
+
+                        cancelButton: "ios-cancel"
+
+                    }
+
+                }).then((result) => {
+
+                    if (result.isConfirmed) {
+
+
+                        /*
+                        Remove BOTH tokens.
+                        */
+
+                        localStorage.removeItem(
+                            "accessToken"
+                        );
+
+
+                        localStorage.removeItem(
+                            "refreshToken"
+                        );
+
+
+                        window.location.href =
+                            "/Account/Login";
+
+                    }
+
+                });
+
+            }
+
+    </script>
+
+
+    <style>
+
+            * {
+                box-sizing: border-box;
+            }
+
+
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                min-height: 100%;
+            }
+
+
+            .app {
+                display: flex;
+                width: 100%;
+                min-height: 100vh;
+                position: relative;
+            }
+
+
+            .sidebar {
+                width: 270px;
+                min-width: 270px;
+                height: 100vh;
+                position: fixed;
+                top: 0;
+                left: 0;
+                display: flex;
+                flex-direction: column;
+                overflow-y: auto;
+                overflow-x: hidden;
+                z-index: 1000;
+            }
+
+
+            .navigation {
+                width: 100%;
+                flex: 1;
+                padding: 0 15px;
+            }
+
+
+                .navigation a {
+                    display: flex;
+                    align-items: center;
+                    gap: 13px;
+                    width: 100%;
+                    min-width: 0;
+                    padding: 13px 16px;
+                    text-decoration: none;
+                    white-space: nowrap;
+                }
+
+
+                    .navigation a i {
+                        width: 20px;
+                        min-width: 20px;
+                        text-align: center;
+                    }
+
+
+                    .navigation a span {
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                    }
+
+
+            .menu-title {
+                margin: 25px 16px 10px;
+                white-space: nowrap;
+            }
+
+
+            .logo {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 25px 0;
+                flex-shrink: 0;
+            }
+
+
+                .logo img {
+                    width: 120px;
+                    height: auto;
+                    object-fit: contain;
+                    border-radius: 18px;
+                    transition: .3s;
+                }
+
+
+                    .logo img:hover {
+                        transform: scale(1.08);
+                    }
+
+
+            .content {
+                margin-left: 270px;
+                width: calc(100% - 270px);
+                min-width: 0;
+                min-height: 100vh;
+                box-sizing: border-box;
+                overflow-x: hidden;
+            }
+
+
+            .logout {
+                width: 100%;
+                padding: 15px;
+                flex-shrink: 0;
+            }
+
+
+                .logout a {
+                    display: flex;
+                    align-items: center;
+                    gap: 13px;
+                    width: 100%;
+                    padding: 13px 16px;
+                    text-decoration: none;
+                }
+
+
+            .ios-popup {
+                border-radius: 32px !important;
+                background: rgba(255,255,255,.75) !important;
+                backdrop-filter: blur(25px);
+                -webkit-backdrop-filter: blur(25px);
+                box-shadow: 0 30px 80px rgba(15,23,42,.2) !important;
+                padding: 35px !important;
+            }
+
+
+            .ios-title {
+                font-size: 28px !important;
+                font-weight: 700 !important;
+                color: #0f172a !important;
+            }
+
+
+            .logout-text {
+                color: #64748b;
+                font-size: 16px;
+                margin-top: 10px;
+            }
+
+
+            .ios-confirm {
+                border-radius: 16px !important;
+                padding: 12px 28px !important;
+                background: linear-gradient( 135deg, #2563eb, #6366f1 ) !important;
+                font-weight: 600 !important;
+            }
+
+
+            .ios-cancel {
+                border-radius: 16px !important;
+                padding: 12px 28px !important;
+                background: #f1f5f9 !important;
+                color: #334155 !important;
+                font-weight: 600 !important;
+            }
+
+
+            .sidebar::-webkit-scrollbar {
+                width: 7px;
+            }
+
+
+            .sidebar::-webkit-scrollbar-thumb {
+                background: rgba(148,163,184,.4);
+                border-radius: 20px;
+            }
+
+
+            .sidebar::-webkit-scrollbar-track {
+                background: transparent;
+            }
+
+
+            @@media (max-width: 900px) {
+
+                .sidebar {
+                    width: 230px;
+                    min-width: 230px;
+                }
+
+
+                .content {
+                    margin-left: 230px;
+                    width: calc(100% - 230px);
+                }
+            }
+
+
+            @@media (max-width: 700px) {
+
+                .sidebar {
+                    width: 80px;
+                    min-width: 80px;
+                }
+
+
+                .content {
+                    margin-left: 80px;
+                    width: calc(100% - 80px);
+                }
+
+
+                .navigation a span,
+                .menu-title,
+                .logout a span {
+                    display: none;
+                }
+
+
+                .navigation a,
+                .logout a {
+                    justify-content: center;
+                }
+
+
+                    .navigation a i,
+                    .logout a i {
+                        margin: 0;
+                    }
+            }
+
+    </style>
+
+
+</body>
+
+</html>
+

@@ -1,0 +1,240 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<title>Sales</title>
+
+<link rel="stylesheet"
+      href="~/css/Sale/Index.css" />
+
+
+<div class="page">
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <div>
+
+            <h1>
+                Sales
+            </h1>
+
+            <p>
+                Manage and view your sales history
+            </p>
+
+        </div>
+
+
+        <div class="header-actions">
+
+            <a href="/Sale/Create"
+               class="create-btn">
+
+                + New Sale
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- SALES TABLE -->
+
+    <div class="sale-card">
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Sale ID
+                        </th>
+
+                        <th>
+                            Customer
+                        </th>
+
+                        <th>
+                            Sale Date
+                        </th>
+
+                        <th>
+                            Created By
+                        </th>
+
+                        <th>
+                            Total Amount
+                        </th>
+
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="saleContainer">
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+
+<script>
+
+    $(document).ready(function() {
+
+        loadSales();
+
+    });
+
+
+    function loadSales() {
+
+        $.ajax({
+
+            url: "/api/sale",
+
+            type: "GET",
+
+            success: function(sales) {
+
+                let rows = "";
+
+
+                if (!sales || sales.length === 0) {
+
+                    rows = `
+
+                                <tr>
+
+                                    <td colspan="6"
+                                        class="empty-message">
+
+                                        No sales found.
+
+                                    </td>
+
+                                </tr>
+
+                            `;
+
+                }
+                else {
+
+                    $.each(
+                        sales,
+                        function(index, sale) {
+
+                            rows += `
+
+                                        <tr>
+
+                                            <td>
+                                                #${sale.saleId}
+                                            </td>
+
+                                            <td>
+                                                ${sale.customerName}
+                                            </td>
+
+                                            <td>
+                                                ${new Date(
+                                sale.salesDate
+                            ).toLocaleString()}
+                                            </td>
+
+                                            <td>
+                                                ${sale.createdBy}
+                                            </td>
+
+                                            <td class="amount">
+                                                Rs.
+                                                ${Number(
+                                sale.totalAmount
+                            ).toFixed(2)}
+                                            </td>
+
+                                            <td>
+
+                                                <a href="/Sale/Details/${sale.saleId}"
+                                                   class="view-btn">
+
+                                                    View Details
+
+                                                </a>
+
+                                            </td>
+
+                                        </tr>
+
+                                    `;
+
+                        }
+                    );
+
+                }
+
+
+                $("#saleContainer")
+                    .html(rows);
+
+            },
+
+
+            error: function(xhr) {
+
+                let message =
+                    "Unable to load sales.";
+
+
+                if (
+                    xhr.responseJSON &&
+                    xhr.responseJSON.message
+                ) {
+
+                    message =
+                        xhr.responseJSON.message;
+
+                }
+
+
+                $("#saleContainer").html(`
+
+                            <tr>
+
+                                <td colspan="6"
+                                    class="error-message">
+
+                                    ${message}
+
+                                </td>
+
+                            </tr>
+
+                        `);
+
+            }
+
+        });
+
+    }
+
+</script>

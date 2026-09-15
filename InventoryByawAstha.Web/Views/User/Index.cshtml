@@ -1,0 +1,651 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "User Management";
+}
+
+
+@section Styles {
+
+    <link rel="stylesheet" href="~/css/User/Index.css" />
+
+
+    <style>
+
+
+        /* ==========================
+           SWEET ALERT IOS GLASS STYLE
+        ========================== */
+
+
+        .swal2-popup {
+            border-radius: 32px !important;
+            background: rgba(255,255,255,.78) !important;
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255,255,255,.8);
+            box-shadow: 0 30px 80px rgba(15,23,42,.18) !important;
+            padding: 35px !important;
+        }
+
+
+
+        .swal2-title {
+            color: #0f172a !important;
+            font-size: 26px !important;
+            font-weight: 700 !important;
+        }
+
+
+
+        .swal2-html-container {
+            color: #64748b !important;
+            font-size: 16px !important;
+        }
+
+
+
+        .swal2-icon {
+            border-width: 3px !important;
+        }
+
+
+
+        .swal2-confirm {
+            border-radius: 16px !important;
+            padding: 12px 28px !important;
+            font-weight: 600 !important;
+            background: linear-gradient( 135deg, #2563eb, #6366f1 ) !important;
+            box-shadow: 0 12px 30px rgba(37,99,235,.3) !important;
+        }
+
+
+
+        .swal2-cancel {
+            border-radius: 16px !important;
+            padding: 12px 25px !important;
+            background: #f1f5f9 !important;
+            color: #334155 !important;
+            font-weight: 600 !important;
+        }
+
+
+
+        .swal2-show {
+            animation: popupAnimation .35s ease !important;
+        }
+
+
+
+        @@keyframes popupAnimation {
+
+
+            from {
+                opacity: 0;
+                transform: scale(.85) translateY(20px);
+            }
+
+
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+    </style>
+
+}
+
+
+
+
+
+
+<div class="page">
+
+
+
+    <div class="header">
+
+
+        <div>
+
+
+            <h1>
+                User Management
+            </h1>
+
+
+            <p>
+                Manage system users and permissions
+            </p>
+
+
+        </div>
+
+
+
+        <div class="header-actions">
+
+
+            <a asp-action="CreateUser"
+               class="create-btn">
+
+                + Add User
+
+            </a>
+
+
+        </div>
+
+
+
+    </div>
+
+
+
+
+
+
+    <div class="table-container">
+
+
+        <table>
+
+
+            <thead>
+
+                <tr>
+
+                    <th>User Id</th>
+
+                    <th>Name</th>
+
+                    <th>Email</th>
+
+                    <th>Mobile</th>
+
+                    <th>Role</th>
+
+                    <th>Status</th>
+
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+
+
+
+            <tbody id="userTableBody">
+            </tbody>
+
+
+
+        </table>
+
+
+    </div>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+@section Scripts {
+
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+
+
+    <script>
+
+
+        $(document).ready(function() {
+
+            loadUsers();
+
+        });
+
+
+
+
+
+
+        function loadUsers() {
+
+
+            $.ajax({
+
+
+                url: "/api/users",
+
+                type: "GET",
+
+
+                success: function(users) {
+
+
+                    let rows = "";
+
+
+
+                    $.each(users, function(index, user) {
+
+
+                        rows += `
+
+
+        <tr>
+
+
+        <td>
+        ${user.userId}
+        </td>
+
+
+        <td>
+
+        <div class="user-info">
+
+
+        <div class="avatar">
+
+        ${user.name.charAt(0)}
+
+        </div>
+
+
+        <span>
+        ${user.name}
+        </span>
+
+
+        </div>
+
+
+        </td>
+
+
+
+        <td>
+        ${user.email}
+        </td>
+
+
+        <td>
+        ${user.phNumber}
+        </td>
+
+
+
+        <td>
+
+        <span class="status role">
+
+        ${user.role}
+
+        </span>
+
+        </td>
+
+
+
+        <td>
+
+
+        ${user.isActive ?
+
+                                `
+
+        <span class="status active">
+
+        Active
+
+        </span>
+
+        `
+
+                                :
+
+                                `
+
+        <span class="status inactive">
+
+        Inactive
+
+        </span>
+
+        `
+
+                            }
+
+
+        </td>
+
+
+
+        <td>
+
+
+        <a href="/User/UpdateUser/${user.userId}"
+
+        class="edit-btn">
+
+        Edit
+
+        </a>
+
+
+
+
+
+        ${user.isActive ?
+
+
+                                `
+
+        <button
+
+        class="delete-btn"
+
+        onclick="confirmDeactivate(${user.userId})">
+
+        Deactivate
+
+        </button>
+
+
+        `
+
+                                :
+
+
+                                `
+
+        <button
+
+        class="activate-btn"
+
+        onclick="changeStatus(${user.userId},true)">
+
+        Activate
+
+        </button>
+
+
+        `
+
+                            }
+
+
+
+        </td>
+
+
+        </tr>
+
+
+
+        `;
+
+
+                    });
+
+
+
+                    $("#userTableBody").html(rows);
+
+
+
+                },
+
+
+
+                error: function(xhr) {
+
+
+
+                    Swal.fire({
+
+                        icon: "error",
+
+                        title: "Oops!",
+
+                        html:
+                            `
+        Unable to load users
+        `
+
+                    });
+
+
+
+                }
+
+
+
+            });
+
+
+        }
+
+
+
+
+
+
+
+
+
+        function confirmDeactivate(id) {
+
+
+
+            Swal.fire({
+
+
+                title: "Deactivate User?",
+
+
+                html:
+                    `
+
+        <div>
+
+        This user will no longer be able to login.
+
+        </div>
+
+        `,
+
+
+                icon: "warning",
+
+
+                showCancelButton: true,
+
+
+                confirmButtonText:
+                    `
+        <i class="fa-solid fa-user-slash"></i>
+        Deactivate
+        `,
+
+
+                cancelButtonText:
+                    `
+        Cancel
+        `,
+
+
+                reverseButtons: true
+
+
+
+            }).then((result) => {
+
+
+                if (result.isConfirmed) {
+
+                    changeStatus(id, false);
+
+                }
+
+
+            });
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+        function changeStatus(id, activate) {
+
+
+
+            let url = activate
+
+                ?
+
+                `/api/users/activate/${id}`
+
+                :
+
+                `/api/users/deactivate/${id}`;
+
+
+
+
+            $.ajax({
+
+
+                url: url,
+
+                type: "PUT",
+
+
+
+                success: function(response) {
+
+
+
+                    Swal.fire({
+
+
+                        icon: "success",
+
+
+                        title: "Completed",
+
+
+                        html:
+                            `
+
+        <div>
+
+        ${response.message}
+
+        </div>
+
+        `,
+
+
+                        timer: 2000,
+
+
+                        showConfirmButton: false
+
+
+                    });
+
+
+
+                    loadUsers();
+
+
+
+                },
+
+
+
+                error: function(xhr) {
+
+
+
+                    let message = "Something went wrong";
+
+
+
+                    if (xhr.responseJSON &&
+                        xhr.responseJSON.message) {
+
+                        message = xhr.responseJSON.message;
+
+                    }
+
+
+
+
+                    Swal.fire({
+
+
+                        icon: "error",
+
+
+                        title: "Action Failed",
+
+
+                        html:
+
+                            `
+
+        <div>
+
+        ${message}
+
+        </div>
+
+        `
+
+
+                    });
+
+
+
+                }
+
+
+
+            });
+
+
+
+        }
+
+
+
+    </script>
+
+
+}

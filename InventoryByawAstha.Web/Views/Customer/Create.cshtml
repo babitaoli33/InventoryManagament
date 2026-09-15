@@ -1,0 +1,304 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<title>Create Customer</title>
+
+<link rel="stylesheet" href="~/css/Customer/Create.css" />
+
+
+<div class="page">
+
+    <!-- =========================
+         HEADER
+    ========================= -->
+
+    <div class="header">
+
+        <div>
+
+            <h1>
+                Create Customer
+            </h1>
+
+            <p>
+                Add a new customer to your system
+            </p>
+
+        </div>
+
+
+        <div class="header-actions">
+
+            <a href="/Customer/Index"
+               class="back-btn">
+
+                ← Back to Customers
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         FORM CARD
+    ========================= -->
+
+    <div class="form-card">
+
+        <form id="customerCreateForm">
+
+
+            <!-- NAME -->
+
+            <div class="form-group">
+
+                <label for="name">
+                    Customer Name
+                </label>
+
+                <input type="text"
+                       id="name"
+                       class="input"
+                       placeholder="Enter customer name"
+                       autocomplete="off" />
+
+            </div>
+
+
+
+            <!-- ADDRESS -->
+
+            <div class="form-group">
+
+                <label for="address">
+                    Address
+                </label>
+
+                <input type="text"
+                       id="address"
+                       class="input"
+                       placeholder="Enter customer address"
+                       autocomplete="off" />
+
+            </div>
+
+
+
+            <!-- PHONE -->
+
+            <div class="form-group">
+
+                <label for="phone">
+                    Phone
+                </label>
+
+                <input type="text"
+                       id="phone"
+                       class="input"
+                       placeholder="Enter phone number"
+                       autocomplete="off" />
+
+            </div>
+
+
+
+            <!-- ACTIVE -->
+
+            <div class="form-group checkbox-group">
+
+                <label>
+
+                    <input type="checkbox"
+                           id="isActive"
+                           checked />
+
+                    Active
+
+                </label>
+
+            </div>
+
+
+
+            <!-- ERROR -->
+
+            <div id="errorMessage"
+                 class="error-message">
+            </div>
+
+
+
+            <!-- ACTIONS -->
+
+            <div class="form-actions">
+
+                <a href="/Customer/Index"
+                   class="cancel-btn">
+
+                    Cancel
+
+                </a>
+
+
+                <button type="submit"
+                        class="create-btn">
+
+                    Create Customer
+
+                </button>
+
+            </div>
+
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     JQUERY
+========================= -->
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+
+<script>
+
+    $(document).ready(function() {
+
+        $("#customerCreateForm").submit(function(event) {
+
+            event.preventDefault();
+
+            createCustomer();
+
+        });
+
+    });
+
+
+    // ==========================================
+    // CREATE CUSTOMER
+    // ==========================================
+
+    function createCustomer() {
+
+        const model = {
+
+            name:
+                $("#name").val().trim(),
+
+            address:
+                $("#address").val().trim(),
+
+            phone:
+                $("#phone").val().trim(),
+
+            isActive:
+                $("#isActive").is(":checked")
+
+        };
+
+
+        // ==========================================
+        // BASIC VALIDATION
+        // ==========================================
+
+        if (!model.name) {
+
+            $("#errorMessage")
+                .text("Customer name is required.");
+
+            $("#name").focus();
+
+            return;
+
+        }
+
+
+        if (!model.address) {
+
+            $("#errorMessage")
+                .text("Customer address is required.");
+
+            $("#address").focus();
+
+            return;
+
+        }
+
+
+        if (!model.phone) {
+
+            $("#errorMessage")
+                .text("Customer phone is required.");
+
+            $("#phone").focus();
+
+            return;
+
+        }
+
+
+        $("#errorMessage")
+            .text("");
+
+
+        // ==========================================
+        // API REQUEST
+        // ==========================================
+
+        $.ajax({
+
+            url: "/api/customer",
+
+            type: "POST",
+
+            contentType: "application/json",
+
+            data:
+                JSON.stringify(model),
+
+
+            success: function() {
+
+                window.location.href =
+                    "/Customer/Index";
+
+            },
+
+
+            error: function(xhr) {
+
+                let message =
+                    "Unable to create customer.";
+
+
+                if (
+                    xhr.responseJSON &&
+                    xhr.responseJSON.message
+                ) {
+
+                    message =
+                        xhr.responseJSON.message;
+
+                }
+
+
+                $("#errorMessage")
+                    .text(message);
+
+            }
+
+        });
+
+    }
+
+</script>

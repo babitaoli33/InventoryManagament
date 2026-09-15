@@ -1,0 +1,332 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<title>Current Stocks</title>
+
+<link rel="stylesheet" href="~/css/Product/CurrentStocks.css" />
+
+<div class="page">
+
+    <!-- =========================
+         HEADER
+    ========================= -->
+
+    <div class="header">
+
+        <div>
+
+            <h1>
+                Current Stocks
+            </h1>
+
+            <p>
+                View the current stock availability of all products
+            </p>
+
+        </div>
+
+        <div class="header-actions">
+
+            <a href="/Product/Index"
+               class="back-btn">
+
+                ← Back to Products
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         STOCK CARD
+    ========================= -->
+
+    <div class="stock-card">
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Product ID
+                        </th>
+
+                        <th>
+                            Product
+                        </th>
+
+                        <th>
+                            Product Group
+                        </th>
+
+                        <th>
+                            Unit
+                        </th>
+
+                        <th>
+                            Available Stock
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="stockContainer">
+
+                    <!--
+                        Stock records will be
+                        inserted here by jQuery.
+                    -->
+
+                    <tr>
+
+                        <td colspan="6"
+                            class="loading-message">
+
+                            Loading stocks...
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     JQUERY
+========================= -->
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+
+<script>
+
+    $(document).ready(function () {
+
+        loadCurrentStocks();
+
+    });
+
+
+    // ==========================================
+    // LOAD CURRENT STOCKS
+    // ==========================================
+
+    function loadCurrentStocks() {
+
+        $.ajax({
+
+            url: "/api/product/current-stocks",
+
+            type: "GET",
+
+            success: function (stocks) {
+
+                let rows = "";
+
+
+                // ==================================
+                // NO DATA
+                // ==================================
+
+                if (!stocks || stocks.length === 0) {
+
+                    rows = `
+
+                        <tr>
+
+                            <td colspan="6"
+                                class="empty-message">
+
+                                No stock records found.
+
+                            </td>
+
+                        </tr>
+
+                    `;
+
+                }
+
+                else {
+
+                    // ==================================
+                    // CREATE TABLE ROWS
+                    // ==================================
+
+                    $.each(
+                        stocks,
+                        function (index, stock) {
+
+                            let statusClass = "";
+
+                            if (stock.status === "In Stock") {
+
+                                statusClass = "status-in-stock";
+
+                            }
+
+                            else if (
+                                stock.status === "Low Stock"
+                            ) {
+
+                                statusClass = "status-low-stock";
+
+                            }
+
+                            else if (
+                                stock.status === "Out Of Stock"
+                            ) {
+
+                                statusClass = "status-out-of-stock";
+
+                            }
+
+
+                            rows += `
+
+                                <tr>
+
+                                    <!-- PRODUCT ID -->
+
+                                    <td>
+
+                                        #${stock.productId}
+
+                                    </td>
+
+
+                                    <!-- PRODUCT NAME -->
+
+                                    <td>
+
+                                        ${stock.productName ?? "-"}
+
+                                    </td>
+
+
+                                    <!-- PRODUCT GROUP -->
+
+                                    <td>
+
+                                        ${stock.productGroupName ?? "-"}
+
+                                    </td>
+
+
+                                    <!-- UNIT -->
+
+                                    <td>
+
+                                        ${stock.unitName ?? "-"}
+
+                                    </td>
+
+
+                                    <!-- AVAILABLE STOCK -->
+
+                                    <td>
+
+                                        <strong class="quantity">
+
+                                            ${stock.quantity}
+
+                                        </strong>
+
+                                    </td>
+
+
+                                    <!-- STATUS -->
+
+                                    <td>
+
+                                        <span class="${statusClass}">
+
+                                            ${stock.status ?? "-"}
+
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+                            `;
+
+                        }
+                    );
+
+                }
+
+
+                // ==================================
+                // PUT ROWS INTO TABLE
+                // ==================================
+
+                $("#stockContainer")
+                    .html(rows);
+
+            },
+
+
+            // ==================================
+            // API ERROR
+            // ==================================
+
+            error: function (xhr) {
+
+                let message =
+                    "Unable to load current stocks.";
+
+
+                if (
+                    xhr.responseJSON &&
+                    xhr.responseJSON.message
+                ) {
+
+                    message =
+                        xhr.responseJSON.message;
+
+                }
+
+
+                $("#stockContainer").html(`
+
+                    <tr>
+
+                        <td colspan="6"
+                            class="error-message">
+
+                            ${message}
+
+                        </td>
+
+                    </tr>
+
+                `);
+
+            }
+
+        });
+
+    }
+
+</script>

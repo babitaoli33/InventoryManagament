@@ -1,0 +1,374 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>Products</title>
+
+    <link rel="stylesheet" href="~/css/Product/Index.css" />
+
+</head>
+
+
+<body>
+
+
+    <div class="page">
+
+
+        <div class="header">
+
+
+            <div>
+
+                <h1>
+                    Products
+                </h1>
+
+                <p>
+                    Manage your inventory products
+                </p>
+
+            </div>
+
+
+
+            <div class="header-actions">
+
+
+                <a href="/Product/Create"
+                   class="create-btn">
+
+                    + Add Product
+
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+
+
+
+
+        <div id="productContainer"
+             class="product-grid">
+        </div>
+
+
+
+
+    </div>
+
+
+
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+
+
+
+
+    <script>
+
+
+            $(document).ready(function() {
+
+                loadProducts();
+
+            });
+
+
+
+
+
+
+
+            function loadProducts() {
+
+
+                $.ajax({
+
+
+                    url: "/api/product",
+
+                    type: "GET",
+
+
+                    success: function(products) {
+
+
+                        let cards = "";
+
+
+
+
+
+                        $.each(products, function(index, product) {
+
+
+
+
+                            cards += `
+
+
+
+                                    <div class="product-card">
+
+
+
+
+
+                                        <div class="product-top">
+
+
+                                            <span class="${product.isActive ? "active" : "inactive"} status">
+
+
+                                                ${product.isActive ? "Active" : "Inactive"}
+
+
+                                            </span>
+
+
+
+                                        </div>
+
+
+
+
+
+
+
+
+                                        <h2>
+
+
+                                            ${product.name}
+
+
+                                        </h2>
+
+
+
+
+
+
+
+
+                                        <p class="description">
+
+
+                                            ${product.description}
+
+
+                                        </p>
+
+
+
+
+
+
+
+
+
+                                        <div class="product-details">
+
+
+
+
+
+                                            <div class="detail-item">
+
+
+                                                <strong>
+                                                    Category:
+                                                </strong>
+
+
+                                                <span>
+                                                    ${product.productGroupName}
+                                                </span>
+
+
+                                            </div>
+
+
+
+
+
+
+
+                                            <div class="detail-item">
+
+
+                                                <strong>
+                                                    Unit:
+                                                </strong>
+
+
+                                                <span>
+                                                    ${product.unitOfMeasureName}
+                                                </span>
+
+
+                                            </div>
+
+
+
+
+
+
+
+
+
+                                            <div class="detail-item">
+
+
+                                                <strong>
+                                                    Created By:
+                                                </strong>
+
+
+                                                <span>
+                                                    ${product.createdBy}
+                                                </span>
+
+
+                                            </div>
+
+
+
+
+
+
+
+
+
+                                            <div class="detail-item">
+
+
+                                                <strong>
+                                                    Created Date:
+                                                </strong>
+
+
+                                                <span>
+
+                                                    ${new Date(product.createdDate)
+                                    .toLocaleString()}
+
+                                                </span>
+
+
+                                            </div>
+
+
+
+
+
+                                        </div>
+
+
+
+
+
+
+
+
+
+                                        <div class="card-footer">
+
+
+
+
+
+                                            <a href="/Product/Edit/${product.productId}"
+                                               class="edit-btn">
+
+
+                                                Edit
+
+
+                                            </a>
+
+
+
+
+
+
+                                        </div>
+
+
+
+
+
+
+                                    </div>
+
+
+
+                                    `;
+
+
+
+
+                        });
+
+
+
+
+
+
+                        $("#productContainer")
+                            .html(cards);
+
+
+
+                    },
+
+
+
+
+
+                    error: function() {
+
+
+                        alert("Unable to load products");
+
+
+                    }
+
+
+
+
+
+                });
+
+
+
+            }
+
+
+
+
+
+    </script>
+
+
+
+
+</body>
+
+</html>

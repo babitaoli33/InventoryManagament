@@ -1,0 +1,520 @@
+﻿/* ==================================
+   SALE CREATE - LIQUID GLASS STYLE
+================================== */
+
+
+body {
+    background: radial-gradient( circle at top left, #dbeafe, #f8fafc 40%, #e0e7ff );
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+}
+
+
+/* ==================================
+   PAGE
+================================== */
+
+.page {
+    padding: 40px;
+    min-height: 100vh;
+}
+
+
+/* ==================================
+   HEADER
+================================== */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+}
+
+
+    .header h1 {
+        font-size: 42px;
+        font-weight: 700;
+        letter-spacing: -1.5px;
+        color: #111827;
+        margin: 0;
+    }
+
+
+    .header p {
+        margin-top: 8px;
+        color: #6b7280;
+    }
+
+
+/* ==================================
+   HEADER ACTIONS
+================================== */
+
+.header-actions {
+    display: flex;
+    align-items: center;
+}
+
+
+/* ==================================
+   GLASS CARD
+================================== */
+
+.glass-card {
+    max-width: 1150px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, .55);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border-radius: 32px;
+    padding: 35px;
+    border: 1px solid rgba(255, 255, 255, .7);
+    box-shadow: 0 30px 70px rgba(0, 0, 0, .12);
+}
+
+
+/* ==================================
+   SECTION
+================================== */
+
+.section {
+    margin-bottom: 35px;
+}
+
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+}
+
+
+    .section-header h2 {
+        margin: 0;
+        color: #111827;
+        font-size: 21px;
+        font-weight: 700;
+    }
+
+
+    .section-header p {
+        margin-top: 6px;
+        margin-bottom: 0;
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+
+/* ==================================
+   FORM GROUP
+================================== */
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    max-width: 500px;
+    margin-bottom: 10px;
+}
+
+
+    .form-group label {
+        font-size: 14px;
+        color: #6b7280;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+
+/* ==================================
+   INPUT
+================================== */
+
+.input {
+    padding: 13px 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(0, 0, 0, .08);
+    background: rgba(255, 255, 255, .7);
+    font-size: 14px;
+    outline: none;
+    transition: .25s ease;
+    color: #374151;
+}
+
+
+    .input:hover {
+        background: rgba(255, 255, 255, .9);
+    }
+
+
+    .input:focus {
+        background: white;
+        border-color: #6366f1;
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, .15);
+    }
+
+
+select.input {
+    cursor: pointer;
+}
+
+
+input[type="number"] {
+    width: 120px;
+    box-sizing: border-box;
+}
+
+
+/* ==================================
+   ADD PRODUCT BUTTON
+================================== */
+
+.add-product-btn {
+    border: none;
+    background: rgba(99, 102, 241, .1);
+    color: #4f46e5;
+    padding: 11px 18px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .25s ease;
+}
+
+
+    .add-product-btn:hover {
+        background: #4f46e5;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+
+/* ==================================
+   TABLE
+================================== */
+
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+
+thead {
+    background: rgba(255, 255, 255, .5);
+}
+
+
+th {
+    text-align: left;
+    padding: 15px;
+    font-size: 12px;
+    color: #6b7280;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    white-space: nowrap;
+}
+
+
+td {
+    padding: 14px 15px;
+    border-top: 1px solid rgba(0, 0, 0, .05);
+    color: #374151;
+    font-size: 14px;
+    vertical-align: middle;
+}
+
+
+.product-row {
+    transition: .2s ease;
+}
+
+
+    .product-row:hover {
+        background: rgba(255, 255, 255, .45);
+    }
+
+
+/* ==================================
+   STOCK
+================================== */
+
+.stock-display {
+    display: inline-block;
+    min-width: 50px;
+    padding: 7px 10px;
+    border-radius: 10px;
+    background: rgba(16, 185, 129, .1);
+    color: #047857;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+}
+
+
+/* ==================================
+   AMOUNT
+================================== */
+
+.amount-display {
+    color: #111827;
+    white-space: nowrap;
+}
+
+
+/* ==================================
+   REMOVE BUTTON
+================================== */
+
+.remove-btn {
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 11px;
+    background: rgba(239, 68, 68, .1);
+    color: #dc2626;
+    font-size: 21px;
+    line-height: 1;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+
+    .remove-btn:hover {
+        background: #dc2626;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+
+/* ==================================
+   TOTAL
+================================== */
+
+.total-section {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 30px;
+    padding: 25px 10px;
+    margin-top: 15px;
+    border-top: 1px solid rgba(0, 0, 0, .07);
+}
+
+
+    .total-section span {
+        color: #6b7280;
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+
+    .total-section strong {
+        color: #111827;
+        font-size: 25px;
+        font-weight: 700;
+    }
+
+
+/* ==================================
+   FORM ACTIONS
+================================== */
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 14px;
+    margin-top: 10px;
+}
+
+
+/* ==================================
+   CREATE BUTTON
+================================== */
+
+.create-btn {
+    background: linear-gradient( 135deg, #111827, #374151 );
+    color: white;
+    padding: 14px 26px;
+    border-radius: 18px;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .18);
+    transition: .25s ease;
+}
+
+
+    .create-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, .25);
+    }
+
+
+    .create-btn:active {
+        transform: scale(.97);
+    }
+
+
+    .create-btn:disabled {
+        opacity: .6;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+
+/* ==================================
+   CANCEL BUTTON
+================================== */
+
+.cancel-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 25px;
+    border-radius: 18px;
+    background: rgba(0, 0, 0, .05);
+    color: #374151;
+    text-decoration: none;
+    font-weight: 600;
+    transition: .25s ease;
+}
+
+
+    .cancel-btn:hover {
+        background: rgba(0, 0, 0, .1);
+        transform: translateY(-2px);
+    }
+
+
+/* ==================================
+   VALIDATION
+================================== */
+
+.validation {
+    display: block;
+    color: #dc2626;
+    font-size: 13px;
+    margin-top: 8px;
+}
+
+
+/* ==================================
+   MESSAGE
+================================== */
+
+.message {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+.success-message {
+    color: #059669;
+}
+
+
+.error-message {
+    color: #dc2626;
+}
+
+
+/* ==================================
+   ANIMATION
+================================== */
+
+@keyframes saleAppear {
+
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+.glass-card {
+    animation: saleAppear .45s ease;
+}
+
+
+/* ==================================
+   RESPONSIVE
+================================== */
+
+@media (max-width: 900px) {
+
+    .page {
+        padding: 25px;
+    }
+
+
+    .header {
+        align-items: flex-start;
+        gap: 20px;
+        flex-direction: column;
+    }
+
+
+    .glass-card {
+        padding: 25px;
+        border-radius: 24px;
+    }
+
+
+    .section-header {
+        align-items: flex-start;
+        gap: 15px;
+        flex-direction: column;
+    }
+
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .page {
+        padding: 18px;
+    }
+
+
+    .header h1 {
+        font-size: 32px;
+    }
+
+
+    .glass-card {
+        padding: 18px;
+    }
+
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+
+    .create-btn,
+    .cancel-btn {
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+    }
+}

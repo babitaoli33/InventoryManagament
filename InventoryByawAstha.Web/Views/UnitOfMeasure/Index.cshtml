@@ -1,0 +1,278 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Unit Of Measure";
+}
+
+@section Styles {
+
+    <link rel="stylesheet" href="~/css/ProductGroup/Index.css" />
+
+    <style>
+
+        .swal2-popup {
+            border-radius: 32px !important;
+            background: rgba(255,255,255,.78) !important;
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255,255,255,.8);
+            box-shadow: 0 30px 80px rgba(15,23,42,.18) !important;
+            padding: 35px !important;
+        }
+
+        .swal2-title {
+            color: #0f172a !important;
+            font-size: 26px !important;
+            font-weight: 700 !important;
+        }
+
+        .swal2-html-container {
+            color: #64748b !important;
+            font-size: 16px !important;
+        }
+
+        .swal2-confirm {
+            border-radius: 16px !important;
+            background: linear-gradient(135deg, #2563eb, #6366f1) !important;
+            padding: 12px 28px !important;
+            font-weight: 600 !important;
+        }
+
+        .swal2-cancel {
+            border-radius: 16px !important;
+            background: #f1f5f9 !important;
+            color: #334155 !important;
+            padding: 12px 25px !important;
+            font-weight: 600 !important;
+        }
+
+    </style>
+}
+
+
+<div class="page">
+
+    <!-- =========================
+         HEADER
+    ========================= -->
+
+    <div class="header">
+
+        <div>
+
+            <h1>
+                Units Of Measure
+            </h1>
+
+            <p>
+                Manage measurement units
+            </p>
+
+        </div>
+
+
+        <div class="header-actions">
+
+            <a href="/UnitOfMeasure/Create"
+               class="create-btn">
+
+                + Add Unit
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         UOM CARDS
+    ========================= -->
+
+    <div id="uomContainer"
+         class="group-grid">
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+
+    <script>
+
+        $(document).ready(function() {
+
+            loadUoms();
+
+        });
+
+
+        // =========================
+        // LOAD UNITS
+        // =========================
+
+        function loadUoms() {
+
+            $.ajax({
+
+                url: "/api/unitofmeasure",
+
+                type: "GET",
+
+                success: function(uoms) {
+
+                    let cards = "";
+
+
+                    if (!uoms || uoms.length === 0) {
+
+                        cards = `
+
+                                    <div class="empty-message">
+
+                                        No units of measure found.
+
+                                    </div>
+
+                                `;
+
+                    }
+                    else {
+
+                        $.each(uoms, function(index, uom) {
+
+                            cards += `
+
+                                        <div class="group-card">
+
+
+                                            <div class="group-header">
+
+
+                                                <div class="group-icon">
+
+                                                    <i class="fa-solid fa-ruler"></i>
+
+                                                </div>
+
+
+                                                <span class="${uom.isActive ? "active" : "inactive"} status">
+
+                                                    ${uom.isActive
+                                    ? "Active"
+                                    : "Inactive"}
+
+                                                </span>
+
+
+                                            </div>
+
+
+
+                                            <h2>
+
+                                                ${escapeHtml(uom.name)}
+
+                                            </h2>
+
+
+
+                                            <p>
+
+                                                ${escapeHtml(
+                                        uom.description ??
+                                        "No description available"
+                                    )}
+
+                                            </p>
+
+
+
+                                            <div class="card-actions">
+
+
+                                                <a href="/UnitOfMeasure/Update/${uom.unitOfMeasureId}"
+
+                                                   class="edit-btn">
+
+                                                    Edit
+
+                                                </a>
+
+
+                                            </div>
+
+
+                                        </div>
+
+                                    `;
+
+                        });
+
+                    }
+
+
+                    $("#uomContainer")
+                        .html(cards);
+
+                },
+
+
+                error: function(xhr) {
+
+                    console.log(xhr.responseText);
+
+
+                    let message =
+                        "Unable to load units of measure.";
+
+
+                    if (
+                        xhr.responseJSON &&
+                        xhr.responseJSON.message
+                    ) {
+
+                        message =
+                            xhr.responseJSON.message;
+
+                    }
+
+
+                    Swal.fire({
+
+                        icon: "error",
+
+                        title: "Oops!",
+
+                        html: `<div>${escapeHtml(message)}</div>`
+
+                    });
+
+                }
+
+            });
+
+        }
+
+
+        // =========================
+        // ESCAPE HTML
+        // =========================
+
+        function escapeHtml(value) {
+
+            return String(value)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+
+        }
+
+    </script>
+
+}
